@@ -8,10 +8,8 @@
 class BigInteger():
 	''' BigInteger class that handles arithmetic of large numbers '''
 
-
 	# A list of single-digits integers representing the large integer
 	digits = []
-	[3,2,1,0,0] # 123
 
 	def __init__(self, number_as_string):
 		''' Constructor takes in a string as a number '''
@@ -185,17 +183,9 @@ l = '''37107287533902102798797998220837590246510135740250
 72107838435069186155435662884062257473692284509516
 20849603980134001723930671666823555245252804609722
 53503534226472524250874054075591789781264330331690'''
-# a = [i for i in l.split('\n')]
-# print "a", a
 
 a = [BigInteger(n) for n in l.split('\n')]
-
-print "\n\n\n OUTPUT \n"
 res = BigInteger("0")
-
-for item in a:
-	res = res.add(item)
-print res.to_string()
-
-
+for item in a: res = res.add(item) 
+print "Sum is:", res.to_string()
 
