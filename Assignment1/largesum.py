@@ -1,8 +1,9 @@
 #############
 # Taylor He, Jacob Manzelmann
 # CS370: Project Euler #13 (Modified)
+# January 25, 2018
 # I pledge my honor that I have abided by the Stevens Honor System.
-#		-Taylor He, Jacob Manzelmann
+#		-Taylor He, Jacob Manzelmann 
 #############
 import sys
 
@@ -17,14 +18,12 @@ class BigInteger():
 	def __init__(self, number_as_string):
 		''' Constructor takes in a string as a number '''
 		if number_as_string == "" or number_as_string == None:
-			print "Error: Empty String or None input."
-			raise
+			raise Exception("Error: Empty String or None input.")
 
 		try:
 			self.digits = [int(digit) for digit in number_as_string[::-1]] 
 		except Exception as e:
-			print "Error: {}.".format(e)
-			raise
+			raise Exception("Error: {}.".format(e))
 
 	def to_string(self):
 		''' Returns a formatted string representing the BigInteger'''
@@ -87,23 +86,21 @@ if __name__ == "__main__":
 	# 	python largesum.py "input12.txt" takes input12.txt as the input file
 	argc = len(sys.argv)
 	if argc > 2:
-		print "Usage: python largesum.py [name of file.txt]"
-		sys.exit()
+		raise Exception("Usage: python largesum.py [name of file.txt]")
+
 	if argc == 2: INPUT_FILE = sys.argv[1]
 
 	try:
 		with open(INPUT_FILE, 'r') as file:
 			l = file.read()
 	except Exception as e:
-		print "Error: {}".format(e)
-		sys.exit()
+		raise Exception(e)
 
-	if l == "":
-		print "Sum is: 0"
-		print "First 10 digits: 0"
-	else:
-		a = [BigInteger(n) for n in l.split('\n')]
-		res = BigInteger("0")
-		for item in a: res = res.add(item) 
-		print "Sum is:", res.to_string()
-		print "First 10 digits:", res.to_string_10()
+
+	num_list = []
+	for i in l.split('\n'):
+		if i != "": num_list += [BigInteger(i)]
+	res = BigInteger("0")
+	for item in num_list: res = res.add(item) 
+	print "Sum is:", res.to_string()
+	print "First 10 digits:", res.to_string_10()
