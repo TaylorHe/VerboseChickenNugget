@@ -4,8 +4,9 @@
 # I pledge my honor that I have abided by the Stevens Honor System.
 #		-Taylor He, Jacob Manzelmann
 #############
+import sys
 
-INPUT_FILE = "input13.txt"
+INPUT_FILE = "input.txt"
 
 class BigInteger():
 	''' BigInteger class that handles arithmetic of large numbers '''
@@ -80,16 +81,29 @@ class BigInteger():
 		return BigInteger(result_num[::-1])
 
 		
+if __name__ == "__main__":
+	# There are two use cases:
+	#	python largesum.py defaults to input.txt as the input file
+	# 	python largesum.py "input12.txt" takes input12.txt as the input file
+	argc = len(sys.argv)
+	if argc > 2:
+		print "Usage: python largesum.py [name of file.txt]"
+		sys.exit()
+	if argc == 2: INPUT_FILE = sys.argv[1]
 
-with open(INPUT_FILE, 'r') as file:
-	l = file.read()
+	try:
+		with open(INPUT_FILE, 'r') as file:
+			l = file.read()
+	except Exception as e:
+		print "Error: {}".format(e)
+		sys.exit()
 
-if l == "":
-	print "Sum is: 0"
-	print "First 10 digits: 0"
-else:
-	a = [BigInteger(n) for n in l.split('\n')]
-	res = BigInteger("0")
-	for item in a: res = res.add(item) 
-	print "Sum is:", res.to_string()
-	print "First 10 digits:", res.to_string_10()
+	if l == "":
+		print "Sum is: 0"
+		print "First 10 digits: 0"
+	else:
+		a = [BigInteger(n) for n in l.split('\n')]
+		res = BigInteger("0")
+		for item in a: res = res.add(item) 
+		print "Sum is:", res.to_string()
+		print "First 10 digits:", res.to_string_10()
