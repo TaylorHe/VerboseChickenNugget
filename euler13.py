@@ -5,6 +5,8 @@
 #		-Taylor He, Jacob Manzelmann
 #############
 
+INPUT_FILE = "input13.txt"
+
 class BigInteger():
 	''' BigInteger class that handles arithmetic of large numbers '''
 
@@ -31,11 +33,7 @@ class BigInteger():
 
 	def to_string_10(self):
 		''' Returns a formatted string representing the BigInteger'''
-		while self.digits[-1] == 0 and len(self.digits) > 1:
-			self.digits.pop()
-		if len(self.digits) < 10:
-			return "".join([str(self.digits[i]) for i in range(-1,-1*len(self.digits)-1,-1)])
-		return "".join([str(self.digits[i]) for i in range(-1,-11,-1)])
+		return self.to_string()[:10]
 
 	def get_digits(self):
 		''' Returns the digit list '''
@@ -83,7 +81,7 @@ class BigInteger():
 
 		
 
-with open('input2.txt', 'r') as file:
+with open(INPUT_FILE, 'r') as file:
 	l = file.read()
 
 if l == "":
