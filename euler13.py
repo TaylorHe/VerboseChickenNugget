@@ -33,6 +33,8 @@ class BigInteger():
 		''' Returns a formatted string representing the BigInteger'''
 		while self.digits[-1] == 0 and len(self.digits) > 1:
 			self.digits.pop()
+		if len(self.digits) < 10:
+			return "".join([str(self.digits[i]) for i in range(-1,-1*len(self.digits)-1,-1)])
 		return "".join([str(self.digits[i]) for i in range(-1,-11,-1)])
 
 	def get_digits(self):
@@ -81,11 +83,15 @@ class BigInteger():
 
 		
 
-with open('input.txt', 'r') as file:
+with open('input2.txt', 'r') as file:
 	l = file.read()
 
-a = [BigInteger(n) for n in l.split('\n')]
-res = BigInteger("0")
-for item in a: res = res.add(item) 
-print "Sum is:", res.to_string()
-print "First 10 digits:", res.to_string_10()
+if l == "":
+	print "Sum is: 0"
+	print "First 10 digits: 0"
+else:
+	a = [BigInteger(n) for n in l.split('\n')]
+	res = BigInteger("0")
+	for item in a: res = res.add(item) 
+	print "Sum is:", res.to_string()
+	print "First 10 digits:", res.to_string_10()
