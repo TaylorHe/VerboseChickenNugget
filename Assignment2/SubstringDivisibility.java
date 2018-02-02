@@ -23,16 +23,40 @@ public class SubstringDivisibility {
 		return true;
 	}
 
+	private static int strSum(String numberAsString) {
+		int sum = 0;
+		for (char c : numberAsString.toCharArray()) {
+			sum += (int)c-48;  // 48 is the ascii starting value of 0
+		}
+		return sum;
+	}
+
+	private static String findFirstDigit(String num, String inputString) {
+		return Integer.toString(strSum(inputString) - strSum(num));
+	}
+
+	private static boolean inElements(String candidateInt, HashSet<Character> elements) {
+		for (char c : candidateInt.toCharArray()) {
+			if (!elements.contains(c)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	private static String pad3(String num) {
 		if (num.length() == 3) return num;
 		if (num.length() == 2) return '0' + num;
 		return "00" + num;
 	}
 
-	private static ArrayList<String> buildSet(int prime) {
+	private static ArrayList<String> buildSet(int prime, HashSet<Character> elements) {
 		ArrayList<String> retSet = new ArrayList<String>();
 		String paddedNum;
 		for (int i=prime; i<1000; i+=prime) {
+			if (!inElements(Integer.toString(i), elements)) {
+				continue;
+			}
 			paddedNum = pad3(Integer.toString(i));
 			if (isUnique(paddedNum)) retSet.add(paddedNum);
 		}
@@ -56,15 +80,54 @@ public class SubstringDivisibility {
 		return retSet;
 	}
 
+	private static long arraySum(ArrayList<String> arr) {
+		long sum = 0;
+		for (String item : arr) {
+			sum += Long.parseLong(item);
+		}
+		return sum;
+	}
+
+	private static void printList(ArrayList<String> arr) {
+		for (String item : arr) {
+			System.out.println(item);
+		}
+	}
+
+
 	public static void main(String[] args) {
-		System.out.println(isUnique(""));
-		System.out.println(isUnique("4"));
-		System.out.println(isUnique("43435252"));
-		System.out.println(isUnique("3456789"));
-		System.out.println(isUnique("2345712"));
-		ArrayList<String> a = buildSet(17);
-		ArrayList<String> b = buildSet(13);
-		System.out.println(a + "\n" + b + "\n" + combinations(b,a));
+		if (args.length != 1) {
+			System.out.println("Usage: java SubstringDivisibility <uniqueDigits>");
+			return;
+		}
+		// Start the timer.
+		long start = System.nanoTime();
+		String input = args[0];
+
+		int[] primes = {2, 3, 5, 7, 11, 13, 17};
+		int primesIndex = input.length() - 4;
+
+		HashSet<Character> elements = new HashSet<Character>();
+		for (char c : input.toCharArray()) {
+			elements.add(c);
+		}
+		ArrayList<String> left, right = buildSet(primes[primesIndex], elements);
+		for (int i = primesIndex - 1; i >= 0; --i) {
+			left = buildSet(primes[i], elements);
+			right = combinations(left, right);
+		}
+
+		//System.out.println(right);
+		
+		for (int i = 0; i < right.size(); ++i) {
+			right.set(i, findFirstDigit(right.get(i), input) + right.get(i));
+		}
+		printList(right);
+		System.out.println("Sum: " + arraySum(right));
+
+		// Print the time!
+		System.out.printf("Elapsed time: %.6f ms\n", (System.nanoTime() - start)/1e6);
+
 
 	}
 }
