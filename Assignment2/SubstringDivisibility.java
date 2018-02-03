@@ -47,8 +47,8 @@ public class SubstringDivisibility {
 	 * @param  inputString
 	 * @return the remaining digit not used as a String
 	 */
-	private static String findFirstDigit(String numberAsString, String inputString) {
-		return Integer.toString(strSum(inputString) - strSum(numberAsString));
+	private static String findFirstDigit(String numberAsString, int inputSum) {
+		return Integer.toString(inputSum - strSum(numberAsString));
 	}
 
 	/**
@@ -184,8 +184,9 @@ public class SubstringDivisibility {
 		}
 		
 		// Find the unused digit and adds it to the front of the element
+		int sumOfInputDigits = strSum(input);
 		for (int i = 0; i < right.size(); ++i) {
-			right.set(i, findFirstDigit(right.get(i), input) + right.get(i));
+			right.set(i, findFirstDigit(right.get(i), sumOfInputDigits) + right.get(i));
 		}
 
 		// Print nicely

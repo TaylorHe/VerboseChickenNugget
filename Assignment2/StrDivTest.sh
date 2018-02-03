@@ -1,23 +1,24 @@
 #!/bin/bash
 if [ ! -f "SubstringDivisibility.class" ]; then
-	echo "Cannot find SubstringDivisibility.class"
-else
-	OUTPUT="$(java SubstringDivisibility 1357)"
-	if [[ "$OUTPUT" =  "Sum: 0"* ]]; then
-		echo "passed: 1357"
-	else
-		echo "failed: 1357"
-	fi
-	
-	OUTPUT="$(java SubstringDivisibility 12346789)"
-	if [[ "$OUTPUT" =  "Sum: 0"* ]]; then
-		echo "passed: 12346789"
-	else
-		echo "failed: 12346789"
-	fi
+	$(javac SubstringDivisibility.java)
+fi
 
-	OUTPUT="$(java SubstringDivisibility 0135)"
-	if [[ "$OUTPUT" =  "1350
+OUTPUT="$(java SubstringDivisibility 1357)"
+if [[ "$OUTPUT" =  "Sum: 0"* ]]; then
+	echo "passed: 1357"
+else
+	echo "failed: 1357"
+fi
+
+OUTPUT="$(java SubstringDivisibility 12346789)"
+if [[ "$OUTPUT" =  "Sum: 0"* ]]; then
+	echo "passed: 12346789"
+else
+	echo "failed: 12346789"
+fi
+
+OUTPUT="$(java SubstringDivisibility 0135)"
+if [[ "$OUTPUT" =  "1350
 1530
 3150
 3510
@@ -150,4 +151,3 @@ Sum: 16695334890"* ]]; then
 	else
 		echo "failed: 0123456789"
 	fi
-fi
