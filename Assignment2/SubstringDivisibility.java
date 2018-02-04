@@ -21,7 +21,7 @@ public class SubstringDivisibility {
 	private static boolean isUnique(String numberAsString) {
 		Set<Character> numSet = new HashSet<Character>();
 		for (char c : numberAsString.toCharArray()) {
-			if (! numSet.add(c)) {
+			if (!numSet.add(c)) {
 				return false;
 			}
 		}
@@ -80,7 +80,7 @@ public class SubstringDivisibility {
 	/**
 	 * Builds all valid 3-digit multiples of the given prime and possible elements
 	 * @param  prime
-	 * @param  elements all valid elements as type HashSet<Character> 
+	 * @param  all valid elements represented by HashSet<Character> 
 	 * @return ArrayList<String> of all valid 3-digit multiples of the given prime
 	 */
 	private static ArrayList<String> buildSet(int prime, HashSet<Character> elements) {
@@ -99,8 +99,7 @@ public class SubstringDivisibility {
 	/**
 	 * Given two ArrayList of Strings left and right, finds all permutations of Strings
 	 * where the last 2 digits of left and the first 2 digits of right overlap.
-	 * Left is always 3 digits long, which right is always at least 3 digits long
-	 * Returns an 
+	 * Left is always 3 digits long, and right is always at least 3 digits long
 	 * @param left  ArrayList<String> where the length of each string is exactly 3
 	 * @param right ArrayList<String> where the length of each string is at least 3
 	 * @return      An ArrayList<String> where the length of each string is the length 
@@ -111,7 +110,6 @@ public class SubstringDivisibility {
 		ArrayList<String> retSet = new ArrayList<String>();
 		for (String s1 : left) {
 			for (String s2 : right) {
-				//System.out.println("anything: " + s1 + '\n' + s2);
 				if (s1.substring(1).equals(s2.substring(0,2))) {
 					s = s1 + s2.substring(2);
 					if (isUnique(s)) {
