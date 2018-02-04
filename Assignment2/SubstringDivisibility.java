@@ -2,8 +2,9 @@
  * Project Euler #43, with some modifications to support various lengths
  * @author Taylor He
  * @author Jacob Manzelmann
+ * @author Thomas Osterman
  * I pledge my honor that I have abided by the Stevens Honor System.
- *   - Taylor He, Jacob Manzelmann
+ *   - Taylor He, Jacob Manzelmann, Thomas Osterman
  */
 
 import java.util.HashSet;
