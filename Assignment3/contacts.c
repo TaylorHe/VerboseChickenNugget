@@ -1,19 +1,31 @@
+/**
+ *  Taylor He, Jacob Manzelmann, Thomas Osterman
+ *  CS370 Assignment 3: Trie
+ *  I pledge my honor that I have abided by the Stevens Honor System.
+ *  -Taylor, Jacob, Thomas
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #define ALPHABET_LENGTH    26
 #define OPERATION_BUF_SIZE  5
 #define NAME_BUF_SIZE      22
+#define LOWER_ASCII_OFFSET 97
 
-//node struct for trie
+// node struct for trie
 typedef struct node {
     int num_children;
     struct node* children[ALPHABET_LENGTH];
 } trie_node;
 
-//function to malloc a new node with base parameters
+
+/**
+ *  Mallocs a new node with size int + 26*node
+ *  Initializes the fields of nodes with 0 and NULL
+ */
 struct node* new_node() {
-	struct node* n_node = malloc(sizeof(int) + sizeof(struct node*) * 26);
+	struct node* n_node = malloc(sizeof(int) + sizeof(struct node*) * ALPHABET_LENGTH);
 	n_node->num_children = 0;
 	for (int i =0; i< ALPHABET_LENGTH - 1; ++i) {
 		n_node->children[i] = NULL;
@@ -21,33 +33,37 @@ struct node* new_node() {
 	return n_node;
 }
 
-//function to add a contact to the trie
+/** 
+ *  Recursively adds each char of a given char* to the trie
+ */
 void add(struct node* trie, char* name) {
 	trie->num_children += 1;
-	if (*name != '\0') {
-		if (trie->children[*(name) - 97] == NULL) {
-			trie->children[(*name) - 97] = new_node();
-			add(trie->children[(*name) - 97], name+1);
-			return;
-		}
-		add(trie->children[(*name) - 97], name+1);
-		return;
-	}
-	return;
+  if (*name == '\0') return;
+	if (trie->children[*(name) - LOWER_ASCII_OFFSET] == NULL) {
+		trie->children[(*name) - LOWER_ASCII_OFFSET] = new_node();
+		add(trie->children[(*name) - LOWER_ASCII_OFFSET], name+1);
+	} else {
+    add(trie->children[(*name) - LOWER_ASCII_OFFSET], name+1);
+  }
 }
 
-//function that returns the number of contacts that start with "partial"
+/**
+ *  Returns the number of items in the trie that start with
+ *  the given char*
+ */
 int find(struct node* trie, char* partial){
 	if (trie == NULL) {
 		return 0;
 	}
 	if (*partial != '\0') {
-		return find(trie->children[(*partial) - 97], partial+1);
+		return find(trie->children[(*partial) - LOWER_ASCII_OFFSET], partial+1);
 	}
 	return trie->num_children;
 }
 
-//function to free the memory upon completion
+/**
+ *  Frees the trie upon completion
+ */
 void free_trie(struct node* trie){
   if (trie == NULL){
     return;
@@ -58,31 +74,33 @@ void free_trie(struct node* trie){
   free(trie);
 }
 
-//main method asks for user input to add and find contacts
+// Asks for user input to add and find contacts
 int main() {
 	struct node* trie = new_node();
-  /*add(trie, "hello");
-  add(trie, "he");
-  printf("%d\n", find(trie, "h"));*/
-  int num_cases;
-  char name2[NAME_BUF_SIZE];
-  char* name = name2;
-  char buffer[OPERATION_BUF_SIZE+NAME_BUF_SIZE];
+
+  int num_cases, num;  // Number of commands
+  char name[NAME_BUF_SIZE];  // Name of contact to add
+  char buffer[OPERATION_BUF_SIZE+NAME_BUF_SIZE]; // Input buffer
+
+  // Get the number of cases
   scanf("%d\n", &num_cases);
+
   for(int i = 0; i < num_cases; i++){
+    // First get the input command
     fgets(buffer, OPERATION_BUF_SIZE+NAME_BUF_SIZE, stdin);
-    //printf("%s\n", buffer);
-    if(buffer[3] == ' '){
-      //memcpy(name, buffer+4, strlen(buffer+4)+1);
-      //printf("%s\n", name);
-      add(trie, buffer+4);
+    // Don't read in the newline
+    if (buffer[strlen(buffer)-1] == '\n'){
+      buffer[strlen(buffer)-1] = 0;
+    } 
+    // Check first letter
+    if(buffer[0] == 'a'){
+      add(trie, buffer+OPERATION_BUF_SIZE-1);
+    } else if(buffer[0] == 'f') {
+      printf("%d\n", find(trie, buffer+OPERATION_BUF_SIZE));
+    } else {
+      printf("Unrecognized command\n");
     }
-    else{
-      //memcpy(name, buffer+5, strlen(buffer+5)+1);
-      //printf("%s\n", name);
-      printf("%d\n", find(trie, "h"));
-      printf("%d\n", find(trie, buffer+5));
-    }
+    // clears the variables.
     memset(buffer, '\0', OPERATION_BUF_SIZE+NAME_BUF_SIZE);
     memset(name, '\0', NAME_BUF_SIZE);
   }
