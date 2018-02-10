@@ -19,7 +19,6 @@ typedef struct node {
     struct node* children[ALPHABET_LENGTH];
 } trie_node;
 
-
 /**
  *  Mallocs a new node with size int + 26*node
  *  Initializes the fields of nodes with 0 and NULL
@@ -78,16 +77,16 @@ void free_trie(struct node* trie){
 int main() {
 	struct node* trie = new_node();
 
-  int num_cases, num;  // Number of commands
+  int num_cases;  // Number of commands
   char name[NAME_BUF_SIZE];  // Name of contact to add
-  char buffer[OPERATION_BUF_SIZE+NAME_BUF_SIZE]; // Input buffer
+  char buffer[OPERATION_BUF_SIZE+NAME_BUF_SIZE+1]; // Input buffer
 
   // Get the number of cases
   scanf("%d\n", &num_cases);
 
   for(int i = 0; i < num_cases; i++){
     // First get the input command
-    fgets(buffer, OPERATION_BUF_SIZE+NAME_BUF_SIZE, stdin);
+    fgets(buffer, OPERATION_BUF_SIZE+NAME_BUF_SIZE+1, stdin);
     // Don't read in the newline
     if (buffer[strlen(buffer)-1] == '\n'){
       buffer[strlen(buffer)-1] = 0;
@@ -101,7 +100,7 @@ int main() {
       printf("Unrecognized command\n");
     }
     // clears the variables.
-    memset(buffer, '\0', OPERATION_BUF_SIZE+NAME_BUF_SIZE);
+    memset(buffer, '\0', OPERATION_BUF_SIZE+NAME_BUF_SIZE+1);
     memset(name, '\0', NAME_BUF_SIZE);
   }
 
