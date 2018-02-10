@@ -73,19 +73,6 @@ Output:
 2
 ---------------------
 
--------Test 6--------
-Input:
-4
-add t
-add te
-add tea
-find te
-
-
-Output:
-2
----------------------
-
 -------Test 7--------
 Input:
 4
