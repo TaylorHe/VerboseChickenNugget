@@ -70,6 +70,7 @@ int insert_key(hash_set* set, char* key) {
 		index = find_index(key_hash, j);
 		if (set->keys[index] == NULL) {
 			set->keys[index] = key;
+			++set->num_keys;
 			//printf("Inserted '%s' in index: %i\n", set->keys[index], index);
 			break;
 		}
@@ -81,11 +82,13 @@ int insert_key(hash_set* set, char* key) {
  *	Deletes a key from the hash_set
  */
 int delete_key(hash_set* set, char* key) {
+	printf("here\n");
 	int index, key_hash = hash(key);
 	for (int j = 1; j <= 19; ++j) {
 		index = find_index(key_hash, j);
 		if (strcmp(set->keys[index], key) == 0) {
 			set->keys[index] = NULL;
+			--set->num_keys;
 			break;
 		}
 	}
@@ -96,7 +99,13 @@ int delete_key(hash_set* set, char* key) {
  *	Prints the hash_set as per SPOJ specs
  */
 void display_keys(hash_set* set) {
-	//int i = 0;
+	int count = 0;
+	for (int i = 0; i < TABLE_SIZE; ++i) {
+		if (set->keys[i] != NULL) {
+			++count;
+		}
+	}
+	printf("%d\n", count);
 	for (int i = 0; i < TABLE_SIZE; ++i) {
 		if (set->keys[i] != NULL) {
 			printf("%d:%s\n", i, set->keys[i]);
@@ -107,8 +116,9 @@ void display_keys(hash_set* set) {
 
 int main() {
 	int num_sets, num_ops;
-	char cmd[4];
-	char key_val[MAX_KEY_SIZE+1];
+	//char cmd[4];
+	//char key_val[MAX_KEY_SIZE+1];
+	char input[MAX_KEY_SIZE+15];
 	hash_set* set = new_set();
 	// For each test case
 	scanf("%d", &num_sets);
@@ -119,11 +129,11 @@ int main() {
 		// for each operation, do i
 		for (int op = 0; op < num_ops; ++op) {
 			//printf("op is: %d, num_op is: %d\n", op, num_ops);
-			scanf("%3s:%15s", cmd, key_val);
-			if (strcmp(cmd, "ADD")==0) {
-				insert_key(set, strdup(key_val));
-			} else if (strcmp(cmd, "DEL")==0) {
-				delete_key(set, strdup(key_val));
+			scanf("%s", input);
+			if (*input == 'A') {
+				insert_key(set, strdup(input+4));
+			} else if (*input == 'D') {
+				delete_key(set, strdup(input+4));
 			}
 		}
 
