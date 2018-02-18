@@ -53,10 +53,13 @@ int hash(char* key) {
 	return (hash * 19) % TABLE_SIZE;
 }
 
-
+/**
+ *	Finds the index of where to insert to hash_set
+ */
 int find_index(int hash, int j) {
 	return (hash + (j*j) + 23*j) % TABLE_SIZE;
 }
+
 /**
  *	Inserts a key into the hash_set
  */
@@ -64,15 +67,13 @@ int insert_key(hash_set* set, char* key) {
 	int j = 0;
 	int index, key_hash = hash(key);
 	while(++j <= 19) {
-		printf("I am here: %i\n", j);
 		index = find_index(key_hash, j);
 		if (set->keys[index] == NULL) {
 			set->keys[index] = key;
-			printf("Inserted '%s' in index: %i\n", set->keys[index], index);
+			//printf("Inserted '%s' in index: %i\n", set->keys[index], index);
 			break;
 		}
 	}
-	printf("I exited insertion at j: %i\n", j);
 	return index;
 }
 
@@ -101,10 +102,6 @@ void display_keys(hash_set* set) {
 			printf("%d:%s\n", i, set->keys[i]);
 		}
 	}
-	// Don't print a newline at the end
-	if (set->keys[100] != NULL) {
-		printf("%d:%s", 100, set->keys[100]);
-	}
 }
 
 
@@ -114,30 +111,19 @@ int main() {
 	char key_val[MAX_KEY_SIZE+1];
 	hash_set* set = new_set();
 	// For each test case
-	printf("Enter Number of Test Cases: ");
 	scanf("%d", &num_sets);
 
 	for (int i = 0; i < num_sets; ++i) {
 		// read in number of operations
-		printf("Enter Number of operations: ");
 		scanf("%d", &num_ops);
 		// for each operation, do i
 		for (int op = 0; op < num_ops; ++op) {
 			//printf("op is: %d, num_op is: %d\n", op, num_ops);
 			scanf("%3s:%15s", cmd, key_val);
-			//printf("cmd is: %s, key_val is: %s\n", cmd, key_val);
-			
 			if (strcmp(cmd, "ADD")==0) {
-				printf("Inserting key...\n");
-				insert_key(set, key_val);
+				insert_key(set, strdup(key_val));
 			} else if (strcmp(cmd, "DEL")==0) {
-				delete_key(set, key_val);
-			}
-			printf("Value at index 81 is: %s\n", set->keys[81]);
-			for (int i = 0; i < TABLE_SIZE; ++i) {
-				if (set->keys[i] != NULL) {
-					printf("%d:%s\n", i, set->keys[i]);
-				}
+				delete_key(set, strdup(key_val));
 			}
 		}
 
