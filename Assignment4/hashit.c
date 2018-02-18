@@ -23,7 +23,7 @@ typedef struct {
  *	hash_set constructor
  */
 hash_set* new_set() {
-	hash_set* n_set = malloc(sizeof(char) * TABLE_SIZE * MAX_KEY_SIZE + sizeof(int));
+	hash_set* n_set = malloc(sizeof(char) * (TABLE_SIZE+1) * (MAX_KEY_SIZE+1) + sizeof(int));
 	n_set->num_keys = 0;
 	for (int i = 0; i < TABLE_SIZE; ++i) {
 		n_set->keys[i] = NULL;
@@ -62,16 +62,28 @@ int find_index(int hash, int j) {
 
 /**
  *	Inserts a key into the hash_set
+ *  Uses open addressing to resolve 
  */
 int insert_key(hash_set* set, char* key) {
-	int j = 0;
 	int index, key_hash = hash(key);
-	while(++j <= 19) {
+	
+	if (set->keys[key_hash] == NULL) {
+		set->keys[key_hash] = key;
+		++set->num_keys;
+		return key_hash;
+	}
+	if (strcmp(set->keys[key_hash], key) == 0) {
+		return key_hash;
+	}
+	// else open address
+	for (int j = 1; j <= 19; ++j) {
 		index = find_index(key_hash, j);
 		if (set->keys[index] == NULL) {
 			set->keys[index] = key;
 			++set->num_keys;
-			//printf("Inserted '%s' in index: %i\n", set->keys[index], index);
+			break;
+		}
+		if (strcmp(set->keys[index], key) == 0) {
 			break;
 		}
 	}
@@ -82,10 +94,18 @@ int insert_key(hash_set* set, char* key) {
  *	Deletes a key from the hash_set
  */
 int delete_key(hash_set* set, char* key) {
-	printf("here\n");
 	int index, key_hash = hash(key);
+	if (set->keys[key_hash] != NULL){
+		if (strcmp(set->keys[key_hash], key) == 0) {
+			set->keys[key_hash] = NULL;
+			--set->num_keys;
+			return key_hash;
+		}	
+	}
+	
 	for (int j = 1; j <= 19; ++j) {
 		index = find_index(key_hash, j);
+		if(set->keys[index] == NULL) continue;
 		if (strcmp(set->keys[index], key) == 0) {
 			set->keys[index] = NULL;
 			--set->num_keys;
@@ -99,13 +119,7 @@ int delete_key(hash_set* set, char* key) {
  *	Prints the hash_set as per SPOJ specs
  */
 void display_keys(hash_set* set) {
-	int count = 0;
-	for (int i = 0; i < TABLE_SIZE; ++i) {
-		if (set->keys[i] != NULL) {
-			++count;
-		}
-	}
-	printf("%d\n", count);
+	printf("%d\n", set->num_keys);
 	for (int i = 0; i < TABLE_SIZE; ++i) {
 		if (set->keys[i] != NULL) {
 			printf("%d:%s\n", i, set->keys[i]);
@@ -118,18 +132,22 @@ int main() {
 	int num_sets, num_ops;
 	//char cmd[4];
 	//char key_val[MAX_KEY_SIZE+1];
-	char input[MAX_KEY_SIZE+15];
-	hash_set* set = new_set();
+	char input[MAX_KEY_SIZE+5];
+	//hash_set* set = new_set();
 	// For each test case
 	scanf("%d", &num_sets);
 
 	for (int i = 0; i < num_sets; ++i) {
+		hash_set* set = new_set();
 		// read in number of operations
 		scanf("%d", &num_ops);
 		// for each operation, do i
 		for (int op = 0; op < num_ops; ++op) {
 			//printf("op is: %d, num_op is: %d\n", op, num_ops);
+			
 			scanf("%s", input);
+			// printf("in: '%s'\n", input+4);
+			
 			if (*input == 'A') {
 				insert_key(set, strdup(input+4));
 			} else if (*input == 'D') {
@@ -139,10 +157,9 @@ int main() {
 
 		// Display at the end of each test case
 		display_keys(set);
-		// Clear the set for reuse
-		clear_table(set);
+		free(set);
 	}
-	free(set);
+	
 	return 0;
 }
 
