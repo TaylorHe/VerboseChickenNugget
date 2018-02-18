@@ -16,7 +16,7 @@ typedef struct {
 } hash_set;
 
 hash_set* new_set() {
-	hash_set* n_set = malloc(sizeof(char) * TABLE_SIZE + sizeof(int));
+	hash_set* n_set = malloc(sizeof(char) * TABLE_SIZE * 15 + sizeof(int));
 	n_set->num_keys = 0;
 	for (int i =0; i< TABLE_SIZE - 1; ++i) {
 		n_set->keys[i] = NULL;
