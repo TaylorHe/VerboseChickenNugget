@@ -53,55 +53,94 @@ int hash(char* key) {
 	return (hash * 19) % TABLE_SIZE;
 }
 
+
+int find_index(int hash, int j) {
+	return (hash + (j*j) + 23*j) % TABLE_SIZE;
+}
 /**
  *	Inserts a key into the hash_set
  */
 int insert_key(hash_set* set, char* key) {
-	return 0;
+	int j = 0;
+	int index, key_hash = hash(key);
+	while(++j <= 19) {
+		printf("I am here: %i\n", j);
+		index = find_index(key_hash, j);
+		if (set->keys[index] == NULL) {
+			set->keys[index] = key;
+			printf("Inserted '%s' in index: %i\n", set->keys[index], index);
+			break;
+		}
+	}
+	printf("I exited insertion at j: %i\n", j);
+	return index;
 }
 
 /**
  *	Deletes a key from the hash_set
  */
 int delete_key(hash_set* set, char* key) {
-	return 0;
+	int index, key_hash = hash(key);
+	for (int j = 1; j <= 19; ++j) {
+		index = find_index(key_hash, j);
+		if (strcmp(set->keys[index], key) == 0) {
+			set->keys[index] = NULL;
+			break;
+		}
+	}
+	return index;
 }
 
 /**
  *	Prints the hash_set as per SPOJ specs
  */
 void display_keys(hash_set* set) {
-	int i = 0;
-	for (i = 0; i < TABLE_SIZE-1; ++i) {
+	//int i = 0;
+	for (int i = 0; i < TABLE_SIZE; ++i) {
 		if (set->keys[i] != NULL) {
 			printf("%d:%s\n", i, set->keys[i]);
 		}
 	}
 	// Don't print a newline at the end
-	if (set->keys[i] != NULL) {
-		printf("%d:%s", i, set->keys[i]);
+	if (set->keys[100] != NULL) {
+		printf("%d:%s", 100, set->keys[100]);
 	}
 }
 
 
 int main() {
 	int num_sets, num_ops;
-	char cmd[3], key_val[MAX_KEY_SIZE];
-	scanf("%d\n", num_sets);
+	char cmd[4];
+	char key_val[MAX_KEY_SIZE+1];
 	hash_set* set = new_set();
 	// For each test case
+	printf("Enter Number of Test Cases: ");
+	scanf("%d", &num_sets);
+
 	for (int i = 0; i < num_sets; ++i) {
 		// read in number of operations
-		scanf("%d\n", num_ops);
-		// for each operation, do it
+		printf("Enter Number of operations: ");
+		scanf("%d", &num_ops);
+		// for each operation, do i
 		for (int op = 0; op < num_ops; ++op) {
-			scanf("%s:%s", cmd, key_val);
-			if (cmd == "ADD") {
-				insert_key(key_val);
-			} else if (cmd == "DEL") {
-				delete_key(key_val);
+			//printf("op is: %d, num_op is: %d\n", op, num_ops);
+			scanf("%3s:%15s", cmd, key_val);
+			//printf("cmd is: %s, key_val is: %s\n", cmd, key_val);
+			
+			if (strcmp(cmd, "ADD")==0) {
+				printf("Inserting key...\n");
+				insert_key(set, key_val);
+			} else if (strcmp(cmd, "DEL")==0) {
+				delete_key(set, key_val);
+			}
+			printf("Value at index 81 is: %s\n", set->keys[81]);
+			for (int i = 0; i < TABLE_SIZE; ++i) {
+				if (set->keys[i] != NULL) {
+					printf("%d:%s\n", i, set->keys[i]);
+				}
 			}
 		}
+
 		// Display at the end of each test case
 		display_keys(set);
 		// Clear the set for reuse
