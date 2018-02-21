@@ -6,4 +6,4 @@ CFLAGS = -g -Wall -Werror -pedantic-errors -fmessage-length=0
 all:
 	$(CC) $(CFLAGS) $(C_FILE) -o $(TARGET)
 clean:
-	rm -f $(TARGET) $(TARGET).exe
+	rm -rf $(TARGET) $(TARGET).exe $(TARGET).dSYM

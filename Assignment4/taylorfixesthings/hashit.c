@@ -19,6 +19,7 @@ typedef struct {
     int num_keys;
 } hash_set;
 
+
 hash_set* new_set() {
 	hash_set *ns = malloc(sizeof(hash_set));
 	ns->num_keys = 0;
