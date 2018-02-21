@@ -1,6 +1,6 @@
 /**
  *  Taylor He, Jacob Manzelmann, Thomas Osterman
- *  CS370 Assignment 3: Trie
+ *  CS370 Assignment 4: Hashit!
  *  I pledge my honor that I have abided by the Stevens Honor System.
  *  -Taylor, Jacob, Thomas
  */
@@ -33,8 +33,8 @@ hash_set* new_set() {
  */
 void clear_table(hash_set* set) {
 	for (int i = 0; i < TABLE_SIZE; ++i) {
-		set->keys[i] = NULL;
 		free(set->keys[i]);
+		set->keys[i] = NULL;
 	}
 	set->num_keys = 0;
 	free(set);
@@ -67,9 +67,7 @@ int find_key(hash_set* set, char* key) {
 	// We can start at 0 because index doesn't change for j=0!
 	for (int j = 0; j <= 19; ++j) {
 		index = find_index(key_hash, j);
-		if (set->keys[j] == NULL) {
-			return 0;
-		}
+
 		if (strcmp(set->keys[index], key) == 0) {
 			return 1;
 		}
