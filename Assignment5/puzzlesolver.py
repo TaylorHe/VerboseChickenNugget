@@ -38,23 +38,25 @@ def generate_solution_visual(sol, ftext):
     box = horiz + "\n"
     
     line = ""
-
+    for rowno in range(3):
+        line = ""
     # Generate first box row
-    for i in range(3):
-        line += "|{}  {}   ".format(order[i], edge_order[int(order[i])][0])
-    line += "|\n"
+        for i in range(3):
+            line += "|{}  {}   ".format(int(order[i + 3*rowno]), edge_order[int(order[i])][0])
+        line += "|\n"
 
-    # Second box row
-    for i in range(3):
-        tile = edge_order[int(order[i])]
-        line += "|{}    {}".format(tile[3], edge_order[int(order[i])][1])
-    line += "|\n"
+        # Second box row
+        for i in range(3):
+            tile = edge_order[int(order[i])]
+            line += "|{}    {}".format(tile[3], edge_order[int(order[i])][1])
+        line += "|\n"
 
-    for i in range(3):
-        line += "|   {}   ".format(edge_order[int(order[i])][2])
-    line += "|\n"
+        for i in range(3):
+            line += "|   {}   ".format(edge_order[int(order[i])][2])
+        line += "|\n"
 
-    box += line + horiz + "\n"
+        box += line + horiz
+        if rowno != 2: box += '\n'
 
     return box
 
@@ -103,7 +105,7 @@ def strip_same_solutions(sol):
     @param: list of solutions
     @return: list of solution stripped
     '''
-    return ("123456789",  {
+    return ("124967385",  {
                         1 : ["A0", "B1", "C1", "D1"],
                         2 : ["A1", "B1", "C1", "D1"],
                         3 : ["A1", "B1", "C1", "D1"],
