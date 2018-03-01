@@ -5,33 +5,34 @@
 
 import sys
 
-num_soutions = 0
-solutions = []
+num_solutions = 0
 # for the board yellow=1 green=2, red=3, blue=4
 # positive is head, negative is tail
 board = [ [0]*4 for _ in range(9) ]
 # board = [[0,0,0,0], [0,0,0,0], [0,0,0,0], 
 #          [0,0,0,0], [0,0,0,0], [0,0,0,0], 
 #          [0,0,0,0], [0,0,0,0], [0,0,0,0]]
+color_map = {"Y0" : -1, "Y1" : 1, "G0" : -2, "G1" : 2,
+             "R0" : -3, "R1" : 3, "B0" : -4, "B1" : 4}
 
 def parse_input(file):
     '''
     Parses the text file. Returns a dictionary with num:lists in the form
-    {
-        1 : [EDGE, EDGE, EDGE, EDGE],
-        2 : [EDGE, EDGE, EDGE, EDGE],
-        3 : [EDGE, EDGE, EDGE, EDGE],
-        4 : [EDGE, EDGE, EDGE, EDGE],
-        5 : [EDGE, EDGE, EDGE, EDGE],
-        6 : [EDGE, EDGE, EDGE, EDGE],
-        7 : [EDGE, EDGE, EDGE, EDGE],
-        8 : [EDGE, EDGE, EDGE, EDGE],
-        9 : [EDGE, EDGE, EDGE, EDGE]
-    }
+    [
+(INDEX0)    1 : [EDGE, EDGE, EDGE, EDGE],
+(INDEX1)    2 : [EDGE, EDGE, EDGE, EDGE],
+            3 : [EDGE, EDGE, EDGE, EDGE],
+            4 : [EDGE, EDGE, EDGE, EDGE],
+            5 : [EDGE, EDGE, EDGE, EDGE],
+            6 : [EDGE, EDGE, EDGE, EDGE],
+            7 : [EDGE, EDGE, EDGE, EDGE],
+            8 : [EDGE, EDGE, EDGE, EDGE],
+            9 : [EDGE, EDGE, EDGE, EDGE]
+    ]
     '''
-    ret = {}
+    ret = []
     for index, tile in enumerate(file.split('\n')):
-        ret[index+1] = [edge for edge in tile.split(',')]
+        ret.append([edge for edge in tile.split(',')])
     return ret
 
 def generate_solution_visual(sol, ftext):
@@ -47,35 +48,31 @@ def generate_solution_visual(sol, ftext):
     box = horiz + "\n"
     
     line = ""
-    for rowno in range(3):
-        line = ""
     # Generate first box row
-        for i in range(3):
-            line += "|{}  {}   ".format(int(order[i + 3*rowno]), edge_order[int(order[i])][0])
-        line += "|\n"
+    for i in range(3):
+        line += "|{}  {}   ".format(order[i], edge_order[int(order[i])][0])
+    line += "|\n"
 
-        # Second box row
-        for i in range(3):
-            tile = edge_order[int(order[i])]
-            line += "|{}    {}".format(tile[3], edge_order[int(order[i])][1])
-        line += "|\n"
+    # Second box row
+    for i in range(3):
+        tile = edge_order[int(order[i])]
+        line += "|{}    {}".format(tile[3], edge_order[int(order[i])][1])
+    line += "|\n"
 
-        for i in range(3):
-            line += "|   {}   ".format(edge_order[int(order[i])][2])
-        line += "|\n"
+    for i in range(3):
+        line += "|   {}   ".format(edge_order[int(order[i])][2])
+    line += "|\n"
 
-        box += line + horiz
-        if rowno != 2: box += '\n'
+    box += line + horiz
 
-    return box
-
+    print box
 
 def output(ftext, sol):
     '''
     Handles output
     '''
     # prints input in format
-    for i in range(1,10):
+    for i in range(9):
         tile = ftext[i]
         print "{}. <{}, {}, {}, {}>".format(i, tile[0], tile[1], tile[2], tile[3]);
     
@@ -86,15 +83,20 @@ def output(ftext, sol):
     if ssol == []: 
         print "\nNo solution found."
         return
-    print "\n{} unique solution".format(len(ssol)) + ("s" if len(ssol) != 1 else "") + " found:"
+    print "{} unique solution".format(len(ssol)) + ("s" if len(ssol) != 1 else "") + " found:"
     
     # Print all solutions
 
     #for solution in ssol:
-    print generate_solution_visual(ssol, ftext)
+    generate_solution_visual(ssol, ftext)
     pass
 
-def solve(parsed_data, num):
+used = [False]*10
+
+def solve(parsed_data):
+    return solve_helper(parsed_data, 0 , "", [])
+
+def solve_helper(data, num, order, solutions):
     '''
     Solves the scramble squares puzzle using brute force with pruning
     The solution should return a tuple:
@@ -104,39 +106,35 @@ def solve(parsed_data, num):
                         }
         )
     '''
-    # TODO
+    if num == 9:
+        num_solutions += 1
+        solutions.append((order, data))
+        return (order, solutions)
     for i in range(1,10):
-        #add piece
-        for j in range(4):
-            if valid(i-1):
-                solve(num+1)
-            rotate(parsed_data[num])
-    pass
+        if !used[i]:
+            used[i] = True
+            for j in range(4):
+                board[i-1] = data[i]
+                if valid(i-1):
+                    solve_helper(num+1)
+                rotate(data[])
+            used[i] = False
+            board[i-1] = [0,0,0,0]
+    return (order, solutions)
 
+# Rotates a given piece
 def rotate(piece):
-    temp = piece[0]
+    temp = piece.pop()
+    piece.insert(0, temp)
+    return
 
+# Turns the data into numbers for easier equivalence checking
 def enumerate_data(data):
     numdata = {}
     for i in range(1,10):
         temp = []
         for j in range(4):
-            if data[i][j] == "Y0":
-                temp.append(-1)
-            elif data[i][j] == "Y1":
-                temp.append(1)
-            elif data[i][j] == "G0":
-                temp.append(-2)
-            elif data[i][j] == "G1":
-                temp.append(2)
-            elif data[i][j] == "R0":
-                temp.append(-3)
-            elif data[i][j] == "R1":
-                temp.append(3)
-            elif data[i][j] == "B0":
-                temp.append(-4)
-            else:
-                temp.append(4)
+            temp.append(color_map[data[i][j]])
         numdata[i] = temp
     return numdata
 
@@ -147,18 +145,10 @@ def strip_same_solutions(sol):
     @param: list of solutions
     @return: list of solution stripped
     '''
-    return ("124967385",  {
+    return ("123",  {
                         1 : ["A0", "B1", "C1", "D1"],
                         2 : ["A1", "B1", "C1", "D1"],
-                        3 : ["A1", "B1", "C1", "D1"],
-                        
-                        4 : ["A0", "B1", "C1", "D1"],
-                        5 : ["A1", "B1", "C1", "D1"],
-                        6 : ["A1", "B1", "C1", "D1"],
-
-                        7 : ["A0", "B1", "C1", "D1"],
-                        8 : ["A1", "B1", "C1", "D1"],
-                        9 : ["A1", "B1", "C1", "D1"]
+                        3 : ["A1", "B1", "C1", "D1"]
                     })
 
 
