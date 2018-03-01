@@ -115,6 +115,7 @@ def solve_helper(data, num, order, solutions):
             used[i] = True
             for j in range(4):
                 board[i-1] = data[i]
+                order += str(i-1)
                 if valid(i-1):
                     solve_helper(num+1)
                 rotate(data[])
