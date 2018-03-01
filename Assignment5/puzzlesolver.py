@@ -5,6 +5,15 @@
 
 import sys
 
+num_soutions = 0
+solutions = []
+# for the board yellow=1 green=2, red=3, blue=4
+# positive is head, negative is tail
+board = [ [0]*4 for _ in range(9) ]
+# board = [[0,0,0,0], [0,0,0,0], [0,0,0,0], 
+#          [0,0,0,0], [0,0,0,0], [0,0,0,0], 
+#          [0,0,0,0], [0,0,0,0], [0,0,0,0]]
+
 def parse_input(file):
     '''
     Parses the text file. Returns a dictionary with num:lists in the form
@@ -80,7 +89,7 @@ def output(ftext, sol):
     generate_solution_visual(ssol, ftext)
     pass
 
-def solve(parsed_data):
+def solve(parsed_data, num):
     '''
     Solves the scramble squares puzzle using brute force with pruning
     The solution should return a tuple:
@@ -91,7 +100,40 @@ def solve(parsed_data):
         )
     '''
     # TODO
+    for i in range(1,10):
+        #add piece
+        for j in range(4):
+            if valid(i-1):
+                solve(num+1)
+            rotate(parsed_data[num])
     pass
+
+def rotate(piece):
+    temp = piece[0]
+
+def enumerate_data(data):
+    numdata = {}
+    for i in range(1,10):
+        temp = []
+        for j in range(4):
+            if data[i][j] == "Y0":
+                temp.append(-1)
+            elif data[i][j] == "Y1":
+                temp.append(1)
+            elif data[i][j] == "G0":
+                temp.append(-2)
+            elif data[i][j] == "G1":
+                temp.append(2)
+            elif data[i][j] == "R0":
+                temp.append(-3)
+            elif data[i][j] == "R1":
+                temp.append(3)
+            elif data[i][j] == "B0":
+                temp.append(-4)
+            else:
+                temp.append(4)
+        numdata[i] = temp
+    return numdata
 
 def strip_same_solutions(sol):
     ''' 
@@ -114,8 +156,10 @@ if __name__=="__main__":
     with open(sys.argv[1], 'r') as f:
         # First parse the data into list of lists
         pdata = parse_input(f.read())
+        # Change data into numbers
+        numdata = enumerate_data(pdata)
         # Solve
-        soln = solve(pdata)
+        soln = solve(numdata)
         # Print
         output(pdata, soln)
 
