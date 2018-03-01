@@ -8,21 +8,21 @@ import sys
 def parse_input(file):
     '''
     Parses the text file. Returns a dictionary with num:lists in the form
-    [
-(INDEX0)    1 : [EDGE, EDGE, EDGE, EDGE],
-(INDEX1)    2 : [EDGE, EDGE, EDGE, EDGE],
-            3 : [EDGE, EDGE, EDGE, EDGE],
-            4 : [EDGE, EDGE, EDGE, EDGE],
-            5 : [EDGE, EDGE, EDGE, EDGE],
-            6 : [EDGE, EDGE, EDGE, EDGE],
-            7 : [EDGE, EDGE, EDGE, EDGE],
-            8 : [EDGE, EDGE, EDGE, EDGE],
-            9 : [EDGE, EDGE, EDGE, EDGE]
-    ]
+    {
+        1 : [EDGE, EDGE, EDGE, EDGE],
+        2 : [EDGE, EDGE, EDGE, EDGE],
+        3 : [EDGE, EDGE, EDGE, EDGE],
+        4 : [EDGE, EDGE, EDGE, EDGE],
+        5 : [EDGE, EDGE, EDGE, EDGE],
+        6 : [EDGE, EDGE, EDGE, EDGE],
+        7 : [EDGE, EDGE, EDGE, EDGE],
+        8 : [EDGE, EDGE, EDGE, EDGE],
+        9 : [EDGE, EDGE, EDGE, EDGE]
+    }
     '''
-    ret = []
+    ret = {}
     for index, tile in enumerate(file.split('\n')):
-        ret.append([edge for edge in tile.split(',')])
+        ret[index+1] = [edge for edge in tile.split(',')]
     return ret
 
 def generate_solution_visual(sol, ftext):
@@ -38,6 +38,7 @@ def generate_solution_visual(sol, ftext):
     box = horiz + "\n"
     
     line = ""
+
     # Generate first box row
     for i in range(3):
         line += "|{}  {}   ".format(order[i], edge_order[int(order[i])][0])
@@ -53,15 +54,17 @@ def generate_solution_visual(sol, ftext):
         line += "|   {}   ".format(edge_order[int(order[i])][2])
     line += "|\n"
 
-    box += line + horiz
+    box += line + horiz + "\n"
 
-    print box
+    return box
+
+
 def output(ftext, sol):
     '''
     Handles output
     '''
     # prints input in format
-    for i in range(9):
+    for i in range(1,10):
         tile = ftext[i]
         print "{}. <{}, {}, {}, {}>".format(i, tile[0], tile[1], tile[2], tile[3]);
     
@@ -72,12 +75,12 @@ def output(ftext, sol):
     if ssol == []: 
         print "\nNo solution found."
         return
-    print "{} unique solution".format(len(ssol)) + ("s" if len(ssol) != 1 else "") + " found:"
+    print "\n{} unique solution".format(len(ssol)) + ("s" if len(ssol) != 1 else "") + " found:"
     
     # Print all solutions
 
     #for solution in ssol:
-    generate_solution_visual(ssol, ftext)
+    print generate_solution_visual(ssol, ftext)
     pass
 
 def solve(parsed_data):
@@ -100,10 +103,18 @@ def strip_same_solutions(sol):
     @param: list of solutions
     @return: list of solution stripped
     '''
-    return ("123",  {
+    return ("123456789",  {
                         1 : ["A0", "B1", "C1", "D1"],
                         2 : ["A1", "B1", "C1", "D1"],
-                        3 : ["A1", "B1", "C1", "D1"]
+                        3 : ["A1", "B1", "C1", "D1"],
+                        
+                        4 : ["A0", "B1", "C1", "D1"],
+                        5 : ["A1", "B1", "C1", "D1"],
+                        6 : ["A1", "B1", "C1", "D1"],
+
+                        7 : ["A0", "B1", "C1", "D1"],
+                        8 : ["A1", "B1", "C1", "D1"],
+                        9 : ["A1", "B1", "C1", "D1"]
                     })
 
 
