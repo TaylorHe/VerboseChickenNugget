@@ -8,21 +8,21 @@ import sys
 def parse_input(file):
     '''
     Parses the text file. Returns a dictionary with num:lists in the form
-    {
-        1 : [EDGE, EDGE, EDGE, EDGE],
-        2 : [EDGE, EDGE, EDGE, EDGE],
-        3 : [EDGE, EDGE, EDGE, EDGE],
-        4 : [EDGE, EDGE, EDGE, EDGE],
-        5 : [EDGE, EDGE, EDGE, EDGE],
-        6 : [EDGE, EDGE, EDGE, EDGE],
-        7 : [EDGE, EDGE, EDGE, EDGE],
-        8 : [EDGE, EDGE, EDGE, EDGE],
-        9 : [EDGE, EDGE, EDGE, EDGE]
-    }
+    [
+(INDEX0)    1 : [EDGE, EDGE, EDGE, EDGE],
+(INDEX1)    2 : [EDGE, EDGE, EDGE, EDGE],
+            3 : [EDGE, EDGE, EDGE, EDGE],
+            4 : [EDGE, EDGE, EDGE, EDGE],
+            5 : [EDGE, EDGE, EDGE, EDGE],
+            6 : [EDGE, EDGE, EDGE, EDGE],
+            7 : [EDGE, EDGE, EDGE, EDGE],
+            8 : [EDGE, EDGE, EDGE, EDGE],
+            9 : [EDGE, EDGE, EDGE, EDGE]
+    ]
     '''
-    ret = {}
+    ret = []
     for index, tile in enumerate(file.split('\n')):
-        ret[index+1] = [edge for edge in tile.split(',')]
+        ret.append([edge for edge in tile.split(',')])
     return ret
 
 def generate_solution_visual(sol, ftext):
@@ -30,29 +30,38 @@ def generate_solution_visual(sol, ftext):
     sol is given as tuple: (a string "1234567890", [EDGE * 4] in order)
     ftext is given as {number : [EDGE] * 4}
     '''
-    box = "+--------+--------+--------+\n".format(sol[0])
+
+    order = sol[0]
+    edge_order = sol[1]
+
+    horiz = "+--------+--------+--------+"
+    box = horiz + "\n"
     
     line = ""
     # Generate first box row
     for i in range(3):
-        line += "|{}  {}   ".format(sol[i], ftext[sol[i]][0])
+        line += "|{}  {}   ".format(order[i], edge_order[int(order[i])][0])
     line += "|\n"
 
     # Second box row
     for i in range(3):
-        line += "|{}    {}".format(ftext[sol[i]][3], ftext[sol[i]][1])
+        tile = edge_order[int(order[i])]
+        line += "|{}    {}".format(tile[3], edge_order[int(order[i])][1])
     line += "|\n"
 
     for i in range(3):
-        line += "|   {}   ".format(ftext[sol[i]][2])
+        line += "|   {}   ".format(edge_order[int(order[i])][2])
+    line += "|\n"
 
-    box += line
+    box += line + horiz
+
+    print box
 def output(ftext, sol):
     '''
     Handles output
     '''
     # prints input in format
-    for i in range(1,10):
+    for i in range(9):
         tile = ftext[i]
         print "{}. <{}, {}, {}, {}>".format(i, tile[0], tile[1], tile[2], tile[3]);
     
@@ -67,8 +76,8 @@ def output(ftext, sol):
     
     # Print all solutions
 
-    for solution in ssol:
-        generate_solution_visual(solution, ftext)
+    #for solution in ssol:
+    generate_solution_visual(ssol, ftext)
     pass
 
 def solve(parsed_data):
@@ -77,7 +86,7 @@ def solve(parsed_data):
     The solution should return a tuple:
         ("1234567890",  { 
                             1 : [4 edges in order (top right bot left)],
-                            2:  [4 edges in order]
+                            2 : [4 edges in order]
                         }
         )
     '''
@@ -91,7 +100,11 @@ def strip_same_solutions(sol):
     @param: list of solutions
     @return: list of solution stripped
     '''
-    return [1,2]
+    return ("123",  {
+                        1 : ["A0", "B1", "C1", "D1"],
+                        2 : ["A1", "B1", "C1", "D1"],
+                        3 : ["A1", "B1", "C1", "D1"]
+                    })
 
 
 if __name__=="__main__":
