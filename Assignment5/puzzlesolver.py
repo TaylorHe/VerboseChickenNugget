@@ -73,7 +73,7 @@ def output(ftext, sol):
     Handles output
     '''
     # prints input in format
-    for i in range(9):
+    for i in range(1,10):
         tile = ftext[i]
         print "{}. <{}, {}, {}, {}>".format(i, tile[0], tile[1], tile[2], tile[3]);
 
@@ -118,7 +118,7 @@ def solve_helper(data, num, order, solutions):
                 board[i-1] = data[i]
                 order += str(i-1)
                 if valid(i-1):
-                    solve_helper(num+1)
+                    solve_helper(data, num+1, order, solutions)
                 rotate(data[i])
             used[i] = False
             board[i-1] = [0,0,0,0]
