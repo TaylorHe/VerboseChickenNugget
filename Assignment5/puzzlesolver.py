@@ -12,8 +12,12 @@ board = [ [0]*4 for _ in range(9) ]
 # board = [[0,0,0,0], [0,0,0,0], [0,0,0,0],
 #          [0,0,0,0], [0,0,0,0], [0,0,0,0],
 #          [0,0,0,0], [0,0,0,0], [0,0,0,0]]
-color_map = {"Y0" : -1, "Y1" : 1, "G0" : -2, "G1" : 2,
-             "R0" : -3, "R1" : 3, "B0" : -4, "B1" : 4}
+color_map = {
+                "Y0" : -1, "Y1" : 1, 
+                "G0" : -2, "G1" : 2,
+                "R0" : -3, "R1" : 3, 
+                "B0" : -4, "B1" : 4
+            }
 
 def parse_input(file):
     '''
@@ -56,7 +60,7 @@ def generate_solution_visual(sol, ftext):
         # Second box row
         for i in range(3):
             tile = edge_order[int(order[i])]
-            line += "|{}    {}".format(tile[3], edge_order[int(order[i])][1])
+            line += "|{}    {}".format(tile[3], tile[1])
         line += "|\n"
 
         for i in range(3):
@@ -64,7 +68,7 @@ def generate_solution_visual(sol, ftext):
         line += "|\n"
 
         box += line + horiz
-        if rowno != 2: box += '\n'
+        if k != 2: box += '\n'
 
     return box
 
@@ -95,7 +99,9 @@ def output(ftext, sol):
 used = [False]*10
 
 def solve(parsed_data):
-    return solve_helper(parsed_data, 0 , "", [])
+    s = solve_helper(parsed_data, 0 , "", [])
+    print "s is: ", s
+    return s
 
 def solve_helper(data, num, order, solutions):
     '''
@@ -110,7 +116,7 @@ def solve_helper(data, num, order, solutions):
     if num == 9:
         num_solutions += 1
         solutions.append((order, data))
-        return (order, solutions)
+        return solutions
     for i in range(1,10):
         if not used[i]:
             used[i] = True
@@ -123,8 +129,7 @@ def solve_helper(data, num, order, solutions):
             used[i] = False
             board[i-1] = [0,0,0,0]
             order = order[:-1]
-
-    return (order, solutions)
+    return solutions
 
 def valid(num):
     '''
@@ -167,6 +172,7 @@ def strip_same_solutions(sol):
     @return: list of solution stripped
     '''
     order = set([tup[0] for tup in sol])
+    print sol
     remove_set = set()
     for item in order:
         rotate_num = ""
@@ -180,22 +186,23 @@ def strip_same_solutions(sol):
                 remove_set.add(item)
     for i in remove_set: order.remove(i)
     print order
+    return list(order)
 
 
     #[ ("123456789", orientation), ("123456789", orientation) ]
-    return ("124967385",  {
-                        1 : ["A0", "B1", "C1", "D1"],
-                        2 : ["A1", "B1", "C1", "D1"],
-                        3 : ["A1", "B1", "C1", "D1"],
+    # return ("124967385",  {
+    #                     1 : ["A0", "B1", "C1", "D1"],
+    #                     2 : ["A1", "B1", "C1", "D1"],
+    #                     3 : ["A1", "B1", "C1", "D1"],
 
-                        4 : ["A0", "B1", "C1", "D1"],
-                        5 : ["A1", "B1", "C1", "D1"],
-                        6 : ["A1", "B1", "C1", "D1"],
+    #                     4 : ["A0", "B1", "C1", "D1"],
+    #                     5 : ["A1", "B1", "C1", "D1"],
+    #                     6 : ["A1", "B1", "C1", "D1"],
 
-                        7 : ["A0", "B1", "C1", "D1"],
-                        8 : ["A1", "B1", "C1", "D1"],
-                        9 : ["A1", "B1", "C1", "D1"]
-                    })
+    #                     7 : ["A0", "B1", "C1", "D1"],
+    #                     8 : ["A1", "B1", "C1", "D1"],
+    #                     9 : ["A1", "B1", "C1", "D1"]
+    #                 })
 
 
 if __name__=="__main__":
