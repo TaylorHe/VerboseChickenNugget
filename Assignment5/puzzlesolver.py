@@ -2,9 +2,8 @@
 # Taylor He, Jacob Manzelmann, Thomas Osterman
 # CS370
 # I pledge my honor that I have abided by the Stevens Honor System.
-
+#import time
 import sys
-from copy import deepcopy
 
 # for the board yellow=1 green=2, red=3, blue=4
 # positive is head, negative is tail
@@ -79,6 +78,7 @@ def output(ftext, sol):
     Handles output
     '''
     # prints input in format
+    print "Input tiles:"
     for i in range(1,10):
         tile = ftext[i]
         print "{}. <{}, {}, {}, {}>".format(i, tile[0], tile[1], tile[2], tile[3]);
@@ -131,7 +131,11 @@ def solve_helper(data, num, order, solutions, board, used_pieces):
         )
     '''
     if num == 9:
-        orientation = deepcopy(data)
+        # make a copy so it is not a reference
+        orientation = {}
+        for index, d_item in enumerate(data):
+            orientation[index+1] = [item for item in data[d_item]]
+
         solutions.append((order, orientation))
         # print "found solution", order, data
         return
@@ -236,9 +240,12 @@ if __name__=="__main__":
     with open(sys.argv[1], 'r') as f:
         # First parse the data into list of lists
         pdata = parse_input(f.read())
+        
+        #start = time.time()
         # Change data into numbers
         numdata = enumerate_data(pdata)
         # Solve
         soln = solve(numdata)
         # Print
         output(pdata, soln)
+        #print time.time()  - start
