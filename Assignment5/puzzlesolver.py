@@ -13,6 +13,12 @@ color_map = {
                 "R0" : -3, "R1" : 3, 
                 "B0" : -4, "B1" : 4
             }
+reverse_color_map = {
+    -1 : "Y0", 1 : "Y1",
+    -2 : "G0", 2 : "G1",
+    -3 : "R0", 3 : "R1",
+    -4 : "B0", 4 : "B1"
+}
 
 def parse_input(file):
     '''
@@ -34,32 +40,32 @@ def parse_input(file):
         ret[index+1] = [edge for edge in tile.split(',')]
     return ret
 
-def generate_solution_visual(sol, ftext):
+def generate_solution_visual(order, edge_order, ftext):
     '''
     sol is given as tuple: (a string "1234567890", [EDGE * 4] in order)
     ftext is given as {number : [EDGE] * 4}
     '''
 
-    order = sol[0]
-    edge_order = sol[1]
     for k in range(3):
         line = ""
         horiz = "+--------+--------+--------+"
         box = horiz + "\n"
 
         # Generate first box row
+        # print "order", order
+        # print "edge", edge_order
         for i in range(3):
-            line += "|{}  {}   ".format(order[i+3*k], edge_order[int(order[i])][0])
+            line += "|{}  {}   ".format(order[i+3*k], reverse_color_map[edge_order[int(order[i])][0]])
         line += "|\n"
 
         # Second box row
         for i in range(3):
             tile = edge_order[int(order[i])]
-            line += "|{}    {}".format(tile[3], tile[1])
+            line += "|{}    {}".format(reverse_color_map[tile[3]], reverse_color_map[tile[1]])
         line += "|\n"
 
         for i in range(3):
-            line += "|   {}   ".format(edge_order[int(order[i])][2])
+            line += "|   {}   ".format(reverse_color_map[edge_order[int(order[i])][2]])
         line += "|\n"
 
         box += line + horiz
@@ -86,9 +92,10 @@ def output(ftext, sol):
     print "\n{} unique solution".format(len(ssol)) + ("s" if len(ssol) != 1 else "") + " found:"
 
     # Print all solutions
+    print "ssol:", ssol
 
-    #for solution in ssol:
-    generate_solution_visual(ssol, ftext)
+    for solution in ssol:
+        print generate_solution_visual(solution, ssol[solution], ftext)
     pass
 
 def solve(parsed_data):
@@ -124,20 +131,20 @@ def solve_helper(data, num, order, solutions, board, used_pieces):
     '''
     if num == 9:
         solutions.append((order, data))
-        print "found solution", order, data
+        # print "found solution", order, data
         return
-    print "recurse", num, order
+    #print "recurse", num, order
     for i in range(1,10):
         if not used_pieces[i]:
             used_pieces[i] = True
             for j in range(4):
-                board[i-1] = data[i]
+                board[num] = data[i]
                 if valid(num, board):
                     order += str(i)
                     #print "order is: ", order
                     solve_helper(data, num+1, order, solutions, board, used_pieces)
                     order = order[:-1]
-                board[i-1] = [0,0,0,0]
+                board[num] = [0,0,0,0]
                 rotate(data[i])
             used_pieces[i] = False
     return
@@ -182,10 +189,11 @@ def strip_same_solutions(sol):
     @param: list of solutions
     @return: list of solution stripped
     '''
-    order = set([tup[0] for tup in sol])
-    print sol
+    #print "SOL IS::::::", sol
+    order = {}
+    for tup in sol: order[tup[0]] = tup[1]
     remove_set = set()
-    for item in order:
+    for item in order.keys():
         rotate_num = ""
         for i in range(6,-1,-3): rotate_num += item[i]
         for i in range(7,0,-3): rotate_num += item[i]
@@ -195,9 +203,9 @@ def strip_same_solutions(sol):
                 remove_set.add(rotate_num)
             else:
                 remove_set.add(item)
-    for i in remove_set: order.remove(i)
-    print order
-    return list(order)
+    for i in remove_set: del order[i]
+    #print "order 203", order
+    return order
 
 
     #[ ("123456789", orientation), ("123456789", orientation) ]
