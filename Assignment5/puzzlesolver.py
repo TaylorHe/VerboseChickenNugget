@@ -4,6 +4,7 @@
 # I pledge my honor that I have abided by the Stevens Honor System.
 
 import sys
+from copy import deepcopy
 
 # for the board yellow=1 green=2, red=3, blue=4
 # positive is head, negative is tail
@@ -40,38 +41,38 @@ def parse_input(file):
         ret[index+1] = [edge for edge in tile.split(',')]
     return ret
 
-def generate_solution_visual(order, edge_order, ftext):
+def generate_solution_visual(order, edge_order):
     '''
     sol is given as tuple: (a string "1234567890", [EDGE * 4] in order)
     ftext is given as {number : [EDGE] * 4}
     '''
 
+    horiz = "+--------+--------+--------+"
+    box = horiz + "\n"
     for k in range(3):
         line = ""
-        horiz = "+--------+--------+--------+"
-        box = horiz + "\n"
 
         # Generate first box row
         # print "order", order
         # print "edge", edge_order
         for i in range(3):
-            line += "|{}  {}   ".format(order[i+3*k], reverse_color_map[edge_order[int(order[i])][0]])
+            line += "|{}  {}   ".format(order[i+3*k], reverse_color_map[edge_order[int(order[i+3*k])][0]])
         line += "|\n"
 
         # Second box row
         for i in range(3):
-            tile = edge_order[int(order[i])]
+            tile = edge_order[int(order[i+3*k])]
             line += "|{}    {}".format(reverse_color_map[tile[3]], reverse_color_map[tile[1]])
         line += "|\n"
 
         for i in range(3):
-            line += "|   {}   ".format(reverse_color_map[edge_order[int(order[i])][2]])
+            line += "|   {}   ".format(reverse_color_map[edge_order[int(order[i+3*k])][2]])
         line += "|\n"
 
         box += line + horiz
         if k != 2: box += '\n'
 
-    return box
+    return box + "\n"
 
 def output(ftext, sol):
     '''
@@ -92,10 +93,10 @@ def output(ftext, sol):
     print "\n{} unique solution".format(len(ssol)) + ("s" if len(ssol) != 1 else "") + " found:"
 
     # Print all solutions
-    print "ssol:", ssol
+    # print "ssol:", ssol
 
-    for solution in ssol:
-        print generate_solution_visual(solution, ssol[solution], ftext)
+    for (order, edge_order) in ssol:
+        print generate_solution_visual(order, edge_order)
     pass
 
 def solve(parsed_data):
@@ -130,7 +131,8 @@ def solve_helper(data, num, order, solutions, board, used_pieces):
         )
     '''
     if num == 9:
-        solutions.append((order, data))
+        orientation = deepcopy(data)
+        solutions.append((order, orientation))
         # print "found solution", order, data
         return
     #print "recurse", num, order
@@ -194,19 +196,22 @@ def strip_same_solutions(sol):
     for tup in sol: order[tup[0]] = tup[1]
     remove_set = set()
     for item in order.keys():
-        rotate_num = ""
-        for i in range(6,-1,-3): rotate_num += item[i]
-        for i in range(7,0,-3): rotate_num += item[i]
-        for i in range(8,0,-3): rotate_num += item[i]
-        if rotate_num in order:
-            if int(item) < int(rotate_num):
-                remove_set.add(rotate_num)
-            else:
-                remove_set.add(item)
+        curr = item
+        for _ in range(3):
+            rotate_num = ""
+            for i in range(6,-1,-3): rotate_num += curr[i]
+            for i in range(7,0,-3): rotate_num += curr[i]
+            for i in range(8,0,-3): rotate_num += curr[i]
+            if rotate_num in order:
+                if int(item) < int(rotate_num):
+                    remove_set.add(rotate_num)
+                else:
+                    remove_set.add(item)
+            curr = rotate_num
     for i in remove_set: del order[i]
-    #print "order 203", order
-    return order
-
+    
+    o = sorted([i for i in order.keys()])
+    return [(i, order[i]) for i in o]
 
     #[ ("123456789", orientation), ("123456789", orientation) ]
     # return ("124967385",  {
