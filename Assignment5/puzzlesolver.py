@@ -5,13 +5,8 @@
 
 import sys
 
-num_solutions = 0
 # for the board yellow=1 green=2, red=3, blue=4
 # positive is head, negative is tail
-board = [ [0]*4 for _ in range(9) ]
-# board = [[0,0,0,0], [0,0,0,0], [0,0,0,0],
-#          [0,0,0,0], [0,0,0,0], [0,0,0,0],
-#          [0,0,0,0], [0,0,0,0], [0,0,0,0]]
 color_map = {
                 "Y0" : -1, "Y1" : 1, 
                 "G0" : -2, "G1" : 2,
@@ -96,14 +91,28 @@ def output(ftext, sol):
     generate_solution_visual(ssol, ftext)
     pass
 
-used = [False]*10
-
 def solve(parsed_data):
-    s = solve_helper(parsed_data, 0 , "", [])
-    print "s is: ", s
-    return s
+    # solutions array
+    arr = []
+    board = [ [0]*4 for _ in range(9) ]
+    # board = [[0,0,0,0], [0,0,0,0], [0,0,0,0],
+    #          [0,0,0,0], [0,0,0,0], [0,0,0,0],
+    #          [0,0,0,0], [0,0,0,0], [0,0,0,0]]
 
-def solve_helper(data, num, order, solutions):
+    # Tells if a piece is used or not
+    # Is length 10 for quicker acess with 1-9 dictionary indexes
+    used = [False]*10
+    solve_helper(parsed_data, 0 , "", arr, board, used)
+    return arr
+'''
+data: A list of lists containing color data for each piece
+num: The number of pieces placed so far
+order: The order in which the pieces have been placed
+solutions: A list of soultion tuples containing the order and rotation states of the pieces
+board: A board containing all pieces added so far
+used_pieces: A list of bools to determine which pieces have been used so far
+'''
+def solve_helper(data, num, order, solutions, board, used_pieces):
     '''
     Solves the scramble squares puzzle using brute force with pruning
     The solution should return a tuple:
@@ -114,24 +123,26 @@ def solve_helper(data, num, order, solutions):
         )
     '''
     if num == 9:
-        num_solutions += 1
         solutions.append((order, data))
-        return solutions
+        print "found solution", order, data
+        return
+    print "recurse", num, order
     for i in range(1,10):
-        if not used[i]:
-            used[i] = True
+        if not used_pieces[i]:
+            used_pieces[i] = True
             for j in range(4):
                 board[i-1] = data[i]
-                order += str(i-1)
-                if valid(i-1):
-                    solve_helper(data, num+1, order, solutions)
+                if valid(num, board):
+                    order += str(i)
+                    #print "order is: ", order
+                    solve_helper(data, num+1, order, solutions, board, used_pieces)
+                    order = order[:-1]
+                board[i-1] = [0,0,0,0]
                 rotate(data[i])
-            used[i] = False
-            board[i-1] = [0,0,0,0]
-            order = order[:-1]
-    return solutions
+            used_pieces[i] = False
+    return
 
-def valid(num):
+def valid(num, board):
     '''
     Checks if adding a tile to the current board is valid
     '''
