@@ -139,7 +139,7 @@ def solve_helper(data, num, order, solutions, board, used_pieces):
         solutions.append((order, orientation))
         # print "found solution", order, data
         return
-    #print "recurse", num, order
+    # print "recurse", num, order
     for i in range(1,10):
         if not used_pieces[i]:
             used_pieces[i] = True
@@ -147,7 +147,7 @@ def solve_helper(data, num, order, solutions, board, used_pieces):
                 board[num] = data[i]
                 if valid(num, board):
                     order += str(i)
-                    #print "order is: ", order
+                    # print "order is: ", order
                     solve_helper(data, num+1, order, solutions, board, used_pieces)
                     order = order[:-1]
                 board[num] = [0,0,0,0]
