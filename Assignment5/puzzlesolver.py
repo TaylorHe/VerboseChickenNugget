@@ -8,11 +8,11 @@ import sys
 # for the board yellow=1 green=2, red=3, blue=4
 # positive is head, negative is tail
 color_map = {
-                "Y0" : -1, "Y1" : 1, 
-                "G0" : -2, "G1" : 2,
-                "R0" : -3, "R1" : 3, 
-                "B0" : -4, "B1" : 4
-            }
+    "Y0" : -1, "Y1" : 1, 
+    "G0" : -2, "G1" : 2,
+    "R0" : -3, "R1" : 3, 
+    "B0" : -4, "B1" : 4
+}
 reverse_color_map = {
     -1 : "Y0", 1 : "Y1",
     -2 : "G0", 2 : "G1",
@@ -42,8 +42,7 @@ def parse_input(file):
 
 def generate_solution_visual(order, edge_order):
     '''
-    sol is given as tuple: (a string "1234567890", [EDGE * 4] in order)
-    ftext is given as {number : [EDGE] * 4}
+    Produces the visual representations of all solutions
     '''
 
     horiz = "+--------+--------+--------+"
@@ -76,6 +75,9 @@ def generate_solution_visual(order, edge_order):
 def output(ftext, sol):
     '''
     Handles output
+    
+    sol is given as tuple: (a string "1234567890", [EDGE * 4] in order)
+    ftext is given as {number : [EDGE] * 4}
     '''
     # prints input in format
     print "Input tiles:"
@@ -91,9 +93,6 @@ def output(ftext, sol):
         print "\nNo solution found."
         return
     print "\n{} unique solution".format(len(ssol)) + ("s" if len(ssol) != 1 else "") + " found:"
-
-    # Print all solutions
-    # print "ssol:", ssol
 
     for (order, edge_order) in ssol:
         print generate_solution_visual(order, edge_order)
@@ -112,23 +111,23 @@ def solve(parsed_data):
     used = [False]*10
     solve_helper(parsed_data, 0 , "", arr, board, used)
     return arr
-'''
-data: A list of lists containing color data for each piece
-num: The number of pieces placed so far
-order: The order in which the pieces have been placed
-solutions: A list of soultion tuples containing the order and rotation states of the pieces
-board: A board containing all pieces added so far
-used_pieces: A list of bools to determine which pieces have been used so far
-'''
+
 def solve_helper(data, num, order, solutions, board, used_pieces):
     '''
     Solves the scramble squares puzzle using brute force with pruning
-    The solution should return a tuple:
+    The solution should save a list of tuples in the form:
         ("1234567890",  {
                             1 : [4 edges in order (top right bot left)],
                             2 : [4 edges in order]
                         }
         )
+
+    data: A list of lists containing color data for each piece
+    num: The number of pieces placed so far
+    order: The order in which the pieces have been placed
+    solutions: A list of soultion tuples containing the order and rotation states of the pieces
+    board: A board containing all pieces added so far
+    used_pieces: A list of bools to determine which pieces have been used so far
     '''
     if num == 9:
         # make a copy so it is not a reference
@@ -136,18 +135,19 @@ def solve_helper(data, num, order, solutions, board, used_pieces):
         for index, d_item in enumerate(data):
             orientation[index+1] = [item for item in data[d_item]]
 
+        # add solution
         solutions.append((order, orientation))
-        # print "found solution", order, data
         return
-    #print "recurse", num, order
     for i in range(1,10):
+        # if the piece has been placed, don't use it
         if not used_pieces[i]:
             used_pieces[i] = True
+            # check all piece orientations
             for j in range(4):
                 board[num] = data[i]
+                # recursively explore all valid statess
                 if valid(num, board):
                     order += str(i)
-                    #print "order is: ", order
                     solve_helper(data, num+1, order, solutions, board, used_pieces)
                     order = order[:-1]
                 board[num] = [0,0,0,0]
@@ -195,7 +195,6 @@ def strip_same_solutions(sol):
     @param: list of solutions
     @return: list of solution stripped
     '''
-    #print "SOL IS::::::", sol
     order = {}
     for tup in sol: order[tup[0]] = tup[1]
     remove_set = set()
@@ -238,14 +237,14 @@ if __name__=="__main__":
     if len(sys.argv) != 2:
         raise Exception("Usage: python puzzlesolver <filename>")
     with open(sys.argv[1], 'r') as f:
-        # First parse the data into list of lists
+        # First parse the data into dictionary of lists
         pdata = parse_input(f.read())
         
-        #start = time.time()
         # Change data into numbers
         numdata = enumerate_data(pdata)
+
         # Solve
         soln = solve(numdata)
+
         # Print
         output(pdata, soln)
-        #print time.time()  - start
