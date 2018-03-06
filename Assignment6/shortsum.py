@@ -1,0 +1,1 @@
+import sys; print sum([(i+1) * int(sys.argv[1][i]) * int('1' * (len(sys.argv[1])-i)) for i in range(len(sys.argv[1]))])
