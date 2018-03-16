@@ -74,15 +74,8 @@ if __name__ == '__main__':
         raise Exception("Usage: python sum.py <number>")
     print sum_substr_of_int(sys.argv[1])
 
-'''
-Testing: 
-    '12' -> 15
-        1 + 2 + 12
-    '123' -> 164
-        1 + 2 + 3 + 12 + 23 + 123
-    '8734' -> 10557
-        8 + 7 + 3 + 4 +
-        87 + 73 + 34 +
-        873 + 734 + 
-        8734
-'''
+    # For testing purposes:
+    # with open(sys.argv[1]) as f:
+    #     print sum_substr_of_int(f.read())
+
+

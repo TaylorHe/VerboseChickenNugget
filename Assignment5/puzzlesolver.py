@@ -181,10 +181,7 @@ def rotate(piece):
 def enumerate_data(data):
     numdata = {}
     for i in range(1,10):
-        temp = []
-        for j in range(4):
-            temp.append(color_map[data[i][j]])
-        numdata[i] = temp
+        numdata[i] = [color_map[data[i][j]] for j in range(4)]
     return numdata
 
 def strip_same_solutions(sol):
