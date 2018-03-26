@@ -28,12 +28,13 @@ def lcs_dp(s1, s2, show_table=False):
                 c[i][j] = max(c[i][j - 1], c[i - 1][j])
 
     results = set()
-    backtrack(s1, s2, m, n, c, results, '')
+    found = set()
+    backtrack(s1, s2, m, n, c, results, '', found)
     return sorted(list(results))
 
-found = set()
 
-def backtrack(s1, s2, m, n, c, results, curr):
+
+def backtrack(s1, s2, m, n, c, results, curr, found):
     """Recursively backtracks table c, and appends to result
     set the final word. 
     """
@@ -46,13 +47,13 @@ def backtrack(s1, s2, m, n, c, results, curr):
     # If the upper-left are equal, then add to the word
     if s1[m-1] == s2[n-1]:
         curr = s1[m-1] + curr
-        backtrack(s1, s2, m-1, n-1, c, results, curr)
+        backtrack(s1, s2, m-1, n-1, c, results, curr, found)
         return
     # if left =/= top, then backtrack with greater
     if c[m][n-1] >= c[m-1][n]:
-        backtrack(s1, s2, m, n-1, c, results, curr)
+        backtrack(s1, s2, m, n-1, c, results, curr, found)
     if c[m][n-1] <= c[m-1][n]:
-        backtrack(s1, s2, m-1, n, c, results, curr)
+        backtrack(s1, s2, m-1, n, c, results, curr, found)
 
     found.add((curr, m, n))
 
