@@ -88,20 +88,30 @@ void backtrack(int** table, int size) {
     cout << minRoute[minRoute.size()-1] << "]" << endl;
 }
 
+/*
+ Creates a dp table that contains the increasing sums
+ as the data matrix is traversed from left to right
+*/
 void solve(vector<vector<int> > data) {
 	int size = data.size();
+    // allocate table
 	int** table = new int*[size];
 	for (int i=0; i<size; ++i) {
 		table[i] = new int[size];
 	}
 
+    // populate the left-most column
+    // (it will always be the same the left-most column of the data)
 	for (int i=0; i<size; ++i) {
 		table[i][0] = data[i][0];
 	}
 
+    // populate table
 	for (int j=1; j<size; ++j) {
+        // the upper row can only come from the left initially
 		table[0][j] = data[0][j] + table[0][j-1];
 
+        // traverse the row moving downwards
 		for (int i=1; i<size; ++i) {
 			if (table[i][j-1] > table[i-1][j]) {
 				table[i][j] = data[i][j] + table[i-1][j];
@@ -111,6 +121,7 @@ void solve(vector<vector<int> > data) {
 			}
 		}
 
+        // traverse back up the row and change values when necessary
 		for (int i=size-2; i>=0; --i) {
 			if (table[i][j-1] > table[i+1][j]) {
 				table[i][j] = data[i][j] + table[i+1][j];
@@ -139,6 +150,8 @@ int main(int argc, char** argv) {
 		}
 		data.push_back(vec);
 	}
+
+    // if 1x1 matrix
 	if (data.size() == 1) {
 		cout << "Min sum: " << data[0][0] << endl;
 		cout << "Values: [" << data[0][0] << ']' << endl;
@@ -146,5 +159,6 @@ int main(int argc, char** argv) {
 	else {
 		solve(data);
 	}
+    
 	return 0;
 }
