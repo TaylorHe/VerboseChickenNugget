@@ -3,11 +3,89 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 
+/*
+ Takes in a table and a size, and backtracks to find the minimal path
+*/
 void backtrack(int** table, int size) {
-	
+    //vector that contains the values of each cell taken for the path
+    vector<int> minRoute;
+    int minSum = table[0][size-1];
+    int start = 0;
+    int i = 1;
+    int j = size-1;
+    //finds the starting position for the backtrack, whose value is also the sum
+    for(; i < size; i++)
+    {
+        if(minSum > table[i][size-1])
+        {
+            minSum = table[i][size-1];
+            start = i;
+        }
+    }
+    i = start;
+    cout << "Min sum: " << minSum << endl;
+    while(j != 0)
+    {
+        int tempMin;
+        //if we're at the top we can't check above us
+        if(i == 0)
+        {
+            //finds the next minSum and adds the difference to the vector
+            if(table[i+1][j] < table[i][j-1]){
+                tempMin = table[i+1][j];
+                i++;
+            }
+            else{
+                tempMin = table[i][j-1];
+                j--;
+            }
+            minRoute.push_back(minSum - tempMin);
+            minSum = tempMin;
+        }
+        //if we're at the bottom we can't check below us
+        else if(i == size-1){
+            //finds the next minSum and adds the difference to the vector
+            if(table[i-1][j] < table[i][j-1]){
+                tempMin = table[i-1][j];
+                i--;
+            }
+            else{
+                tempMin = table[i][j-1];
+                j--;
+            }
+            minRoute.push_back(minSum - tempMin);
+            minSum = tempMin;
+        }
+        else{
+            //finds the next minSum and adds the difference to the vector
+            if(table[i+1][j] < table[i-1][j] && table[i+1][j] < table[i][j-1]){
+                tempMin = table[i+1][j];
+                i++;
+            }
+            else if(table[i-1][j] < table[i+1][j] && table[i-1][j] < table[i][j-1]){
+                tempMin = table[i-1][j];
+                i--;
+            }
+            else{
+                tempMin = table[i][j-1];
+                j--;
+            }
+            minRoute.push_back(minSum - tempMin);
+            minSum = tempMin;
+        }
+    }
+    //add the final value to the vector and reverse it
+    minRoute.push_back(minSum);
+    reverse(minRoute.begin(), minRoute.end());
+    cout << "Values: [";
+    for(i = 0; i < minRoute.size()-1; i++){
+        cout << minRoute[i] << ", ";
+    }
+    cout << minRoute[minRoute.size()-1] << "]" << endl;
 }
 
 void solve(vector<vector<int> > data) {
