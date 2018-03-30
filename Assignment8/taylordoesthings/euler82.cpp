@@ -21,16 +21,13 @@ void backtrack(int** table, int size) {
     for(; i < size; i++)
     {
         cout << minSum <<"\n";
-        if(minSum >= table[i][size-1])
+        if(minSum > table[i][size-1])
         {
             minSum = table[i][size-1];
             start = i;
         }
     }
     
-    for(int a = j-1; a >= 0; ++a) {
-        
-    }
     i = start;
     cout << "Min sum: " << minSum << endl;
     while(j != 0)
@@ -118,13 +115,8 @@ void solve(vector<vector<int> > data) {
 
         // traverse the row moving downwards
 		for (int i=1; i<size; ++i) {
-            table[i][j] = min(data[i][j] + table[i-1][j], table[i][j] = data[i][j] + table[i][j-1]);
-//            if (table[i][j-1] > table[i-1][j]) {
-//                table[i][j] = data[i][j] + table[i-1][j];
-//            }
-//            else {
-//                table[i][j] = data[i][j] + table[i][j-1];
-//            }
+            table[i][j] = min(  data[i][j] + table[i-1][j], 
+                                data[i][j] + table[i][j-1]);
 		}
 
         // traverse back up the row and change values when necessary
