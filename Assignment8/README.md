@@ -2,5 +2,7 @@
 
 Also includes backtracking the full min path
 
-compile with
-> g++ euler82.cpp -o euler82 -std=c++11
+compile with make, run with optional filename, default file is "matrix.txt"
+
+Usage: ./euler82 [filename]
+
