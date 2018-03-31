@@ -24,6 +24,9 @@ void backtrack(int** table, int size) {
             start = i;
         }
     }
+
+    // direction last moved: 0=right, 1=down, 2=up
+    int direction = 0;
     
     i = start;
     cout << "Min sum: " << minSum << endl;
@@ -34,13 +37,15 @@ void backtrack(int** table, int size) {
         if(i == 0)
         {
             //finds the next minSum and adds the difference to the vector
-            if(table[i+1][j] < table[i][j-1]){
+            if(direction != 2 && table[i+1][j] < table[i][j-1]){
                 tempMin = table[i+1][j];
                 i++;
+                direction = 1;
             }
             else{
                 tempMin = table[i][j-1];
                 j--;
+                direction = 0;
             }
             minRoute.push_back(minSum - tempMin);
             minSum = tempMin;
@@ -48,30 +53,38 @@ void backtrack(int** table, int size) {
         //if we're at the bottom we can't check below us
         else if(i == size-1){
             //finds the next minSum and adds the difference to the vector
-            if(table[i-1][j] < table[i][j-1]){
+            if(direction != 1 && table[i-1][j] < table[i][j-1]){
                 tempMin = table[i-1][j];
                 i--;
+                direction = 2;
             }
             else{
                 tempMin = table[i][j-1];
                 j--;
+                direction = 0;
             }
             minRoute.push_back(minSum - tempMin);
             minSum = tempMin;
         }
         else{
             //finds the next minSum and adds the difference to the vector
-            if(table[i+1][j] < table[i-1][j] && table[i+1][j] < table[i][j-1]){
+            //move down
+            if(direction != 2 && table[i+1][j] <= table[i-1][j] && table[i+1][j] <= table[i][j-1]){
                 tempMin = table[i+1][j];
                 i++;
+                direction = 1;
             }
-            else if(table[i-1][j] < table[i+1][j] && table[i-1][j] < table[i][j-1]){
+            //move up
+            else if(direction != 1 && table[i-1][j] <= table[i+1][j] && table[i-1][j] <= table[i][j-1]){
                 tempMin = table[i-1][j];
                 i--;
+                direction = 2;
             }
+            //move left
             else{
                 tempMin = table[i][j-1];
                 j--;
+                direction = 0;
             }
             minRoute.push_back(minSum - tempMin);
             minSum = tempMin;
