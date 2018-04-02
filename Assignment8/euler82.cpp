@@ -24,7 +24,7 @@ void backtrack(int** table, int size) {
             start = i;
         }
     }
-
+    
     // direction last moved: 0=right, 1=down, 2=up
     int direction = 0;
     
@@ -139,7 +139,13 @@ void solve(vector<vector<int> > data) {
             table[i][j] = min(table[i][j], data[i][j] + table[i+1][j]);
 		}
 	}
-
+    for (int i=0; i<size; ++i) {
+        for (int j = 0; j < size; ++j){
+            cout << table[i][j] << ",";
+        }
+        cout << endl;
+        
+    }
 	backtrack(table, size);
 
 	for (int i=0; i<size; ++i) {
