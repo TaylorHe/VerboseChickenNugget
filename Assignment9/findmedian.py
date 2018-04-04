@@ -30,8 +30,11 @@ class MinHeap:
 
     def peek(self):
         """Returns the smallest element"""
-        return -self.heap[0] if len(self.heap) > 0 else None
-
+        try:
+            return -self.heap[0]
+        except Exception as e:
+            raise e
+        
     def __len__(self):
         """Returns the size of the heap"""
         return len(self.heap)
@@ -57,8 +60,11 @@ class MaxHeap:
 
     def peek(self):
         """Returns the smallest element"""
-        return self.heap[0] if len(self.heap) > 0 else None
-
+        try:
+            return self.heap[0]
+        except Exception as e:
+            raise e
+            
     def __len__(self):
         """Returns the size of the heap"""
         return len(self.heap)
