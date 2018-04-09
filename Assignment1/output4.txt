@@ -1,2 +1,0 @@
-Full sum: 4013
-First 10 digit: 4013

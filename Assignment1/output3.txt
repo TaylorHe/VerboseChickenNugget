@@ -1,2 +1,0 @@
-Full sum: 11007
-First 10 digits: 11007
