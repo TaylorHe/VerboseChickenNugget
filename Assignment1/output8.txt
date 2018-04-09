@@ -1,0 +1,2 @@
+Full sum: 3100
+First 10 digits: 3100
