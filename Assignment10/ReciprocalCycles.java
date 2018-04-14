@@ -6,28 +6,37 @@
 
 import java.util.HashMap;
 public class ReciprocalCycles {
-	
-	public static String fractionToDecimal(int denr) {
-		if (denr == 1) {
+	/**
+	 *	Finds the repeating cycle, if any, in a fraction 1/d
+	 *	@param int denominator [1,2000]
+	 *	@return String "0.%s(%s), cycle length %d"
+	 */
+	public static String findCycle(int d) {
+		if (d == 1) {
 			return "1";
 		}
 		String result = "";
 		HashMap<Integer, Integer> h = new HashMap<Integer, Integer>();
-		int remainder = 1 % denr;
+		int remainder = 1 % d;
+		int quotient;
+		// Loop while the remainder is not 0 and the hashmap entry
+		// for the remainder exists
 		while(remainder != 0 && (h.get(remainder) == null)) {
-			h.put(remainder, result.length());
+			// append to the hashmap
+			h.put(remainder, result.length()); 
 			remainder *= 10;
-			int res_part = remainder / denr;
-			result += Integer.toString(res_part);
-			remainder = remainder % denr;
+			quotient = remainder / d;
+			result += Integer.toString(quotient);
+			remainder = remainder % d;
 		}
 
 		if (remainder == 0) {
-			return "0." + result;
+			return String.format("0.%s", result);
 		} else {
 			// Formatting magic
 			String cycle = result.substring(h.get(remainder));
-			return "0." + result.substring(0, h.get(remainder)) + "(" + cycle + "), cycle length " + cycle.length();
+			return String.format("0.%s(%s), cycle length %d", result.substring(0, h.get(remainder)), cycle, cycle.length());
+			// return result.substring(0, h.get(remainder)) + "(" + cycle + "), cycle length " + cycle.length();
 		}
 		
 	}
@@ -44,12 +53,12 @@ public class ReciprocalCycles {
 				System.err.println("Error: Denominator must be an integer in [1, 2000]. Received \'" + args[0] + "\'.");
 				return;
 			}
+			// Finally print
+			System.out.println(String.format("1/%s = %s", args[0], findCycle(num)));
 		} catch (Exception e) {
 			System.err.println("Error: Denominator must be an integer in [1, 2000]. Received \'" + args[0] + "\'.");
 			return;
 		}
-		// Finally print
-		System.out.println("1/" + args[0] + " = " + fractionToDecimal(Integer.parseInt(args[0])));
 
 	}
 }
