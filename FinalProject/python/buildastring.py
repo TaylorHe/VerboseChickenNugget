@@ -2,9 +2,9 @@
 import os
 import sys
 
-def rabin_hash(s, d=257, q=11):
+def rabin_hash(s, d=5294212309, q=9743212277):
     """Implementation of the Rabin Fingerprint Hash
-    Default init values are 257 and 11
+    TODO: NOT FINISHED
     """
     l = len(s)
     p = 0
@@ -13,17 +13,21 @@ def rabin_hash(s, d=257, q=11):
     return p
 
 def rabin_karp_search_old(pattern, s):
-    """Checks if pattern occurs in/is a substring of s"""
+    """Checks if pattern occurs in/is a substring of s
+    This function is more promising than the horrid rabin_karp_search,
+    but I don't know yet. It's not finished.
+    """
     m, n = len(pattern), len(s)
     pattern_hash = rabin_hash(pattern)
     for i in range(1, n-m+1):
         # Check if the hash and values are the same
-        if ((rabin_hash(s[i:i+m-1]) == pattern_hash)
-            and (s[i:i+m-1] == pattern)):
+        if (rabin_hash(s[i:i+m-1]) == pattern_hash
+            and s[i:i+m-1] == pattern):
             return True
     return False
 
 def rabin_karp_search(pattern, s, d=257, q=11):
+    """This is too slow. Fuck."""
     m, n = len(pattern), len(s)
     
     # h = pow(d,m-1)%q
@@ -55,6 +59,9 @@ def buildString(A, B, S):
     """Finds the lowest cost of making a string given
     append cost A, substring copy cost B, and target string S
     """
+    # specify if you want to use the the rabin karp search
+    RABIN_VERSION = False  
+
     cost = [0] + ([300000000] * len(S))
     copy_length = min(1, B/A)
     for i in range(1, len(cost)):
@@ -63,9 +70,14 @@ def buildString(A, B, S):
         # while you are in range AND it makes sense to copy
         # AND you are able to copy, do it.
         j = copy_length
-        while j <= i and i < len(cost) - j and rabin_karp_search(S[i:i+j], S[:i]):
-            cost[i+j] = min(cost[i+j], cost[i] + B)
-            j += 1
+        if RABIN_VERSION:
+            while j <= i and i < len(cost) - j and rabin_karp_search(S[i:i+j], S[:i]):
+                cost[i+j] = min(cost[i+j], cost[i] + B)
+                j += 1
+        else: 
+            while j <= i and i < len(cost) - j and S[i:i+j] in S[:i]:
+                cost[i+j] = min(cost[i+j], cost[i] + B)
+                j += 1
 
     return cost[-1]
 
@@ -74,7 +86,7 @@ if __name__ == '__main__':
     print buildString(8, 9, 'bacbacacb')
 
 
-
+# THIS IS FOR HACKERRANK
 # if __name__ == '__main__':
 #     fptr = open(os.environ['OUTPUT_PATH'], 'w')
 
