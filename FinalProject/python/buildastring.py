@@ -2,10 +2,59 @@
 import os
 import sys
 
-#
-# Complete the buildString function below.
-#
+def rabin_hash(s, d=257, q=11):
+    """Implementation of the Rabin Fingerprint Hash
+    Default init values are 257 and 11
+    """
+    l = len(s)
+    p = 0
+    for c in s:
+        p = (d*p+ord(c))%q
+    return p
+
+def rabin_karp_search_old(pattern, s):
+    """Checks if pattern occurs in/is a substring of s"""
+    m, n = len(pattern), len(s)
+    pattern_hash = rabin_hash(pattern)
+    for i in range(1, n-m+1):
+        # Check if the hash and values are the same
+        if ((rabin_hash(s[i:i+m-1]) == pattern_hash)
+            and (s[i:i+m-1] == pattern)):
+            return True
+    return False
+
+def rabin_karp_search(pattern, s, d=257, q=11):
+    m, n = len(pattern), len(s)
+    
+    # h = pow(d,m-1)%q
+    # pow() might take a while for large m, so mod as we go
+    h = 1
+    for _ in range(m-1):
+        h = (d * h)%q
+    p, t = 0, 0
+    result = []
+    for i in range(m): 
+        p = (d*p+ord(pattern[i]))%q
+        t = (d*t+ord(s[i]))%q
+    for k in range(n-m+1):
+        if p == t: # check character by character
+            match = True
+            for i in range(m):
+                if pattern[i] != s[k+i]:
+                    match = False
+                    break
+            if match:
+                result = result + [k]
+        if k < n-m:
+            t = (t-h*ord(s[k]))%q 
+            t = (t*d+ord(s[k+m]))%q 
+            t = (t+q)%q 
+    return result
+
 def buildString(A, B, S):
+    """Finds the lowest cost of making a string given
+    append cost A, substring copy cost B, and target string S
+    """
     cost = [0] + ([300000000] * len(S))
     copy_length = min(1, B/A)
     for i in range(1, len(cost)):
@@ -14,7 +63,7 @@ def buildString(A, B, S):
         # while you are in range AND it makes sense to copy
         # AND you are able to copy, do it.
         j = copy_length
-        while j <= i and i < len(cost) - j and S[i:i+j] in S[:i]:
+        while j <= i and i < len(cost) - j and rabin_karp_search(S[i:i+j], S[:i]):
             cost[i+j] = min(cost[i+j], cost[i] + B)
             j += 1
 
