@@ -18,10 +18,10 @@ def compare(size = 100000):
 if __name__ == '__main__':
     start = time.time()
     answer = compare()
-    end = time.time()
     total = 0;
     for i in range(len(answer)):
         print(answer[i])
         total += answer[i][0] + answer[i][1]
+    end = time.time()
     print 'Sum:', total
     print 'Time:', round((end - start) * 1000, 2), 'ms'
