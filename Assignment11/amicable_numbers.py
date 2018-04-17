@@ -43,7 +43,7 @@ def amicable_fast(size = 100000):
         if a != b and a == sum_factors_fast(b):
             amic_pair = (a, b)
             if found.add(amic_pair):
-                result += [amic_pair]
+                result += [sorted(amic_pair)]
     return result
 
 #####################################################
