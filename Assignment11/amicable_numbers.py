@@ -88,27 +88,27 @@ if __name__ == '__main__':
     # Constants
     N = 100000
     speed = {
-        "BRUTE FORCE": (amicable_brute_force, [N/10]), 
+        "BRUTE FORCE": (amicable_brute_force, [N]), 
         "FAST": (amicable_fast, [N]) 
         # "FASTER": (amicable_even_faster, [N*10])
     }
-    print "Testing:\nBrute force at 10,000 \nFast at 100,000\n"
+    print "Testing:\nBrute force at 100,000 \nFast at 100,000\n"
     p = []
-    # for name in speed:
-    #     start = time.time()
-    #     [answer] = map(speed[name][0], speed[name][1])
-    #     total = 0;
+    for name in speed:
+        start = time.time()
+        [answer] = map(speed[name][0], speed[name][1])
+        total = 0;
 
-    #     for tup in answer:
-    #         # print tup
-    #         total += sum(tup)
-    #     end = time.time()
-    #     # print'Sum:', total
-    #     p += [('{0} Time: {1:.2f} ms'.format(name, (end - start) * 1000))]
-    # print "\n".join(sorted(p)) + "\n"
+        for tup in answer:
+            # print tup
+            total += sum(tup)
+        end = time.time()
+        # print'Sum:', total
+        p += [('{0} Time: {1:.2f} ms'.format(name, (end - start) * 1000))]
+    print "\n".join(sorted(p)) + "\n"
     ### FASTEST
 
-    print "Now testing FASTER at 100,000"
+    print "Now testing fast at 100,000"
     start = time.time()
     answer = amicable_fast(100000)
     total = 0;
