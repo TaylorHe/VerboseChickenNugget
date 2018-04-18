@@ -1,3 +1,7 @@
+# Taylor He, Jacob Manzelmann, Thomas Osterman
+# Assignment 11: Project Euler #21 (Modified)
+# I pledge my honor that I have abided by the Stevens Honor System.
+
 import time
 ################## BRUTE FORCE ######################
 def sum_factor(n):
@@ -23,24 +27,24 @@ def sum_factors_fast(n):
     Same idea as sum_factors, but we only have to
     seach up to sqrt(n)
     """
-    result = []
+    # Starts at 1 because 1 is a factor for every int
+    total = 1
     for i in range(2, int(n**0.5) + 1):
         if n%i == 0:
             # If n%i==0, both n/i and i are in factors
-            result += [i, n/i] 
-    # Plus one because 1 is a factor for every int
-    return sum(result)+1
+            total += i + n/i 
+    return total
 
-def amicable_fast(size = 100000):
+def amicable_brute_opt(size = 100000):
     """
-    Same idea as brute force, but checks less
+    Same idea as brute force, but checks less so it's optimized
     """
     # found is a set that checks for duplicates
     result = []
     found = set()
-    for a in range(1, size+1):
-        b = sum_factors_fast(a)
-        if a != b and a == sum_factors_fast(b):
+    for a in range(1, size+1):      # n
+        b = sum_factors_fast(a)     # sqrt(n)
+        if a != b and a == sum_factors_fast(b): # sqrt(n)
             amic_pair = (min(a,b), max(a,b))
             if amic_pair not in found:
                 found.add(amic_pair)
@@ -51,9 +55,8 @@ def amicable_fast(size = 100000):
 
 
 ################## O(n^2) #####################
-def amicable_even_faster_doesnt_work(size = 100000):
+def amicable_fast(size = 1000000):
     """
-    =======BROKEN=======
     Instead of brute forcing, we can use a bit more
     memory to store factors and keep it in a divisors list
     Now that we generate the divisors, finding pairs takes 
@@ -65,58 +68,84 @@ def amicable_even_faster_doesnt_work(size = 100000):
     # The outer for loop is from 1-n
     #   The inner for loop is from 2 to a*b < n
     #       Set the divisor[index] += a
-    #       where index is a*b, since that's what it's multiplying up to
+    #       where index is a*b, since those are the factors
+    #       Keep it under size, so index * n
     amicables = []
-    divisors = [0] * (size*size) # this part is bounded by some number, dunno what
-    for a in range(1, size+1):
-        for b in range(2, size):
+    divisors = [0] * (size + 2)
+    for a in range(1, size):
+        for b in range(2, size/a + 1):
             divisors[a*b] += a
-    # print m
-    # print max(divisors)
-    # print divisors
+    
+    # Now that we've built up a divisor list, it will look like a 
+    # bunch of random numbers. However, a pair of amicable numbers 
+    # will actually look like:  [..., 88730, ... , 79750] 
+    #   where those numbers are at indexes 79750 and 88730, respectively
+    
+    # print divisors[79750], divisors[88730]
 
-    # This part is really confusing, since we have to access index of 
+    # This part is confusing, since we have to access index of 
     # the value of the divisor for the actual number
     for i in range(1, len(divisors)):
-        if i < divisors[i] and divisors[divisors[i]] == i:
+        if (i < divisors[i] # the first number < second
+            and divisors[i] <= size # keep both under size
+            and divisors[divisors[i]] == i): # Check they are amicable
             amicables.append((i, divisors[i]))
     return amicables
 
 ###################################################
 
-if __name__ == '__main__':
-    # Constants
-    N = 100000
+def speed_test(N):
     speed = {
-        "BRUTE FORCE": (amicable_brute_force, [N]), 
-        "FAST": (amicable_fast, [N]) 
-        # "FASTER": (amicable_even_faster, [N*10])
+        "BRUTE FORCE": (amicable_brute_force, [N/10]), # 100K takes too long (241741.51 ms)
+        "FAST": (amicable_brute_opt, [N]),
+        "FASTER": (amicable_fast, [N]),
     }
-    print "Testing:\nBrute force at 100,000 \nFast at 100,000\n"
+    print "Testing:\nBrute force at 10,000\nFast at 100,000\nFaster at 100,000"
     p = []
     for name in speed:
         start = time.time()
         [answer] = map(speed[name][0], speed[name][1])
-        total = 0;
-
-        for tup in answer:
-            # print tup
-            total += sum(tup)
+        # total = sum([sum(tup) for tup in answer])
+        # ans = "\n".join([str(tup) for tup in answer])
         end = time.time()
-        # print'Sum:', total
+        # print ans
+        # print 'Sum:', total
         p += [('{0} Time: {1:.2f} ms'.format(name, (end - start) * 1000))]
     print "\n".join(sorted(p)) + "\n"
-    ### FASTEST
 
-    print "Now testing fast at 100,000"
+def verification():
+    """Psuedo-verification; checks if the num of pairs is correct
+    Manually verified works till 22.3M, probs more too
+    22,300,000 has 142 amicable pairs
+    Really should be checking for Sum, but I'm too lazy to add them
+    """
     start = time.time()
-    answer = amicable_fast(100000)
-    total = 0;
-
-    for tup in answer:
-        print tup
-        total += sum(tup)
+    answer = amicable_even_faster(223 * 100 * 1000)
+    assert len(answer) == 142
     end = time.time()
+    print 'Time: {0:.2f} ms'.format((end - start) * 1000)
+
+
+if __name__ == '__main__':
+    # Constants
+    N = 100000
+    RUN_SPEED_TESTS = False        # Speed tests
+    RUN_VERIFICATION = False       # Verify fast version
+
+    if RUN_SPEED_TESTS:
+        speed_test(N)              # Compares speed between 3 versions
+    if RUN_VERIFICATION:
+        verification()             # Tests for 22.3M! AHHH!
+
+    # The actual program
+    start = time.time()
+
+    answer = amicable_fast(N)
+    total = sum([sum(tup) for tup in answer])
+    ans = "\n".join([str(tup) for tup in answer])
+
+    end = time.time()
+    print ans
     print 'Sum:', total
     print 'Time: {0:.2f} ms'.format((end - start) * 1000)
 
