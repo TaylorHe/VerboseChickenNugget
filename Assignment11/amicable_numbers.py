@@ -21,7 +21,7 @@ def amicable_brute_force(size = 10000):
     return amicables
 #####################################################
 
-################## O(n * sqrt(n)) ###############
+################## O(n * sqrt(n))? ###############
 def sum_factors_fast(n):
     """
     Same idea as sum_factors, but we only have to
@@ -44,8 +44,8 @@ def amicable_brute_opt(size = 100000):
     found = set()
     for a in range(1, size+1):      # n
         b = sum_factors_fast(a)     # sqrt(n)
-        if a != b and a == sum_factors_fast(b): # sqrt(n)
-            amic_pair = (min(a,b), max(a,b))
+        if a < b and a == sum_factors_fast(b): # sqrt(n)
+            amic_pair = (a, b)
             if amic_pair not in found:
                 found.add(amic_pair)
                 result += [amic_pair]
@@ -65,11 +65,10 @@ def amicable_fast(size = 1000000):
     """
 
     # Populate the divisors array with 2 for loops
-    # The outer for loop is from 1-n
-    #   The inner for loop is from 2 to a*b < n
+    # The outer for loop is from 1-size
+    #   The inner for loop is from 2 to a*b < size
     #       Set the divisor[index] += a
-    #       where index is a*b, since those are the factors
-    #       Keep it under size, so index * n
+    #       where index is a*b, since a is a divisor of index
     amicables = []
     divisors = [0] * (size + 2)
     for a in range(1, size):
