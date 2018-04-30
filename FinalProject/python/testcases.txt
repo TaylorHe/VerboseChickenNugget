@@ -1,0 +1,88 @@
+Test 1: Tests for the most optimal copy
+Input: 1 
+25 1 10 
+aaaaaaaaaaaaaaaaaaaaaaaaa
+
+Output: 23
+===========================
+Test 2:
+Tests copying smaller substrings instead of larger ones
+Input:
+1
+9 4 6
+abccdabcd
+
+Output:
+30
+===========================
+Test 3: Tests single character input
+Input:
+1
+1 4 5
+a
+
+Output:
+4
+===========================
+Test 4: Tests append cost greater than copy cost
+Input:
+1
+5 40 2
+abccb
+
+Output:
+124
+===========================
+Test 5: Tests 3 test cases
+Input:
+3
+4 2 3
+abab
+2 1 2
+ab
+3 1 2
+abc
+
+Output:
+7
+2
+3
+===========================
+Test 6: Tests copy cost same as append cost
+Input:
+2
+6 2 2
+abcacb
+6 2 2
+abcabc
+
+Output:
+12
+8
+===========================
+Test 7: Tests not copying when (append * #letters < copy)
+Input:
+1
+8 2 6
+abababab
+
+Output:
+16
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

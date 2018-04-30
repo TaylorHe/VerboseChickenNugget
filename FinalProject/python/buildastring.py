@@ -164,13 +164,17 @@ def build_string_dp_memo(a, b, s):
         # i + j < len(cost): You can't copy more than length of string
         # s[i:i+j] in s[:i]: The future string appears in the current one 
         j = min_copy_length
+        # Repeated code here, pls refactor
         while (j <= i and i + j < len(cost)):
-            if s[i:i+j] not in found_substrings and s[i:i+j] in s[:i]:
+            if s[i:i+j] in found_substrings:
+                cost[i+j] = min(cost[i+j], cost[i] + b)
+                j += 1
+            elif s[i:i+j] in s[:i]:
                 found_substrings.add(s[i:i+j])
+                cost[i+j] = min(cost[i+j], cost[i] + b)
+                j += 1
             else:
                 break
-            cost[i+j] = min(cost[i+j], cost[i] + b)
-            j += 1
     return cost[-1]
 
 def build_string_dp(a, b, s):
@@ -195,6 +199,7 @@ def build_string(a, b, s):
     """
     # specify which version you want to use
     # DP, DP_MEMO, SUFFIX, RABIN_KARP
+    # You should use DP
     VERSION = "DP"
     # func_map = {
     #     "DP": build_string_dp,
@@ -220,10 +225,9 @@ if __name__ == '__main__':
     print build_string(8, 9, 'bacbacacb')  # 42
 
 
-# Ignore everything below this line
 
 
-# THIs Is FOR HACKERRANK
+# THIS IS FOR HACKERRANK
 # if __name__ == '__main__':
 #     fptr = open(os.environ['OUTPUT_PATH'], 'w')
 
